@@ -30,8 +30,12 @@ def ProcessReadable():
       print "Connection from", ClientAddress
     elif Socket is SerialPort:
       while SerialPort.inWaiting() > 0:
-        SerialData += SerialPort.readline()
-      WriteList.append(ClientSocket)
+          SerialData += SerialPort.readline()
+      print SerialData
+      if ClientSocket == None:
+        SerialData = ""
+      else:
+        WriteList.append(ClientSocket)
     else:
       global UnixData
       UnixData += Socket.recv(1024)
@@ -67,7 +71,12 @@ def ProcessErrored():
 # MAIN LOOP
 Schedule()
 while True:
-  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
+  s = GetSerialData()
+  if s <> "":
+    UnixData += s
+    WriteList.append(SerialPort)
+    ResetSerialData()
+  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList, 10)
   ProcessReadable()
   ProcessWritable()
   ProcessErrored()
