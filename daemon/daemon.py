@@ -5,30 +5,34 @@ import sys
 import os
 import serial
 
-ServerAddress = './uds_socket'
-# Open Serial
-try:
-  SerialPort = serial.Serial('/dev/ttyACM0', 9600)
-#  SerialPort.nonblocking()
-except Exception, e:
-  print(e)
-  sys.exit()
+# Open Serial Port
+def OpenSerialPort():
+  try:
+    return serial.Serial('/dev/ttyACM0', 9600)
+  except Exception, e:
+    print(e)
+    sys.exit()
 
-# Make sure the socket does not already exist
-try:
-  os.unlink(ServerAddress)
-except OSError:
-  if os.path.exists(ServerAddress):
-    raise
-# Create a UDS socket
-UnixSock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-# Bind the socket to the port
-print >>sys.stderr, 'starting up on %s' % ServerAddress
-UnixSock.bind(ServerAddress)
+def OpenUnixSock():
+  # Make sure the socket does not already exist
+  ServerAddress = './uds_socket'
+  try:
+    os.unlink(ServerAddress)
+  except OSError:
+    if os.path.exists(ServerAddress):
+      raise
+  # Create a UDS socket
+  UnixSock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+  # Bind the socket to the port
+  print >>sys.stderr, 'starting up on %s' % ServerAddress
+  UnixSock.bind(ServerAddress)
+  # Listen for incoming connections
+  UnixSock.listen(1)
+  return UnixSock
 
-# Listen for incoming connections
-UnixSock.listen(1)
-
+# Create lists for select
+SerialPort = OpenSerialPort()
+UnixSock = OpenUnixSock()
 ReadList =  [UnixSock, SerialPort]
 WriteList = []
 ErrorList = [UnixSock, SerialPort]
@@ -39,6 +43,7 @@ while True:
   Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
   for Socket in Readable:
     if Socket is UnixSock:
+#New Connection
       ClientSocket, ClientAddress = UnixSock.accept()
       ReadList.append(ClientSocket)
       print "Connection from", ClientAddress
