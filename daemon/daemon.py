@@ -5,13 +5,7 @@ import sys
 import os
 import serial
 from com import *
-from threading import Timer
-from time import sleep
-
-def Alarm():
-  print "Alarm"
-  t = Timer(2, Alarm) 
-  t.start()
+from schedule import *
 
 # Create lists for select
 SerialPort = OpenSerialPort()
@@ -71,8 +65,7 @@ def ProcessErrored():
       ErrorList.remove(Socket)
 
 # MAIN LOOP
-t = Timer(2, Alarm) 
-t.start()
+Schedule()
 while True:
   Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
   ProcessReadable()
