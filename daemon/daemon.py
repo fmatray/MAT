@@ -1,28 +1,65 @@
 #!/usr/bin/python
+import select
+import socket
 import sys
 import os
 import serial
-import socket
 
-try : 
+ServerAddress = './uds_socket'
+# Open Serial
+try:
   SerialPort = serial.Serial('/dev/ttyACM0', 9600)
-  SerialPort.nonblocking()
-
-  UnixPort = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-  UnixPort.bind("/tmp/arduino.socket")
-  UnixPort.listen(1)
-  UnixPort.setblocking(0)
-
-  while True:
-    conn, addr = UnixPort.accept()
-    Data = conn.recv(1024)
-    if Data: 
-      SerialPort.write(Data)
-      conn.close()
-    if SerialPort.inWaiting():
-      print SerialPort.readline()
-    
+#  SerialPort.nonblocking()
 except Exception, e:
-  os.remove("/tmp/arduino.socket")
   print(e)
-  raise
+  sys.exit()
+
+# Make sure the socket does not already exist
+try:
+  os.unlink(ServerAddress)
+except OSError:
+  if os.path.exists(ServerAddress):
+    raise
+# Create a UDS socket
+UnixSock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+# Bind the socket to the port
+print >>sys.stderr, 'starting up on %s' % ServerAddress
+UnixSock.bind(ServerAddress)
+
+# Listen for incoming connections
+UnixSock.listen(1)
+
+ReadList =  [UnixSock, SerialPort]
+WriteList = []
+ErrorList = [UnixSock, SerialPort]
+UnixData = ""
+SerialData = ""
+ClientSocket = None
+while True:
+  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
+  for Socket in Readable:
+    if Socket is UnixSock:
+      ClientSocket, ClientAddress = UnixSock.accept()
+      ReadList.append(ClientSocket)
+      print "Connection from", ClientAddress
+    elif Socket is SerialPort:
+      while SerialPort.inWaiting() > 0:
+        SerialData += SerialPort.readline()
+      WriteList.append(ClientSocket)
+    else:
+      UnixData += Socket.recv(1024)
+      if not UnixData:
+        Socket.close()
+        ReadList.remove(Socket)
+        ClientSocket = None
+      else:
+        WriteList.append(SerialPort)
+  
+  for Socket in Writable:
+   WriteList.remove(Socket)
+   if Socket is SerialPort:
+    Socket.write(UnixData)
+    UnixData = ""
+   else:
+    Socket.send(SerialData)
+    SerialData = ""
