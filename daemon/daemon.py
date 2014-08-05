@@ -4,31 +4,14 @@ import socket
 import sys
 import os
 import serial
+from com import *
+from threading import Timer
+from time import sleep
 
-# Open Serial Port
-def OpenSerialPort():
-  try:
-    return serial.Serial('/dev/ttyACM0', 9600)
-  except Exception, e:
-    print(e)
-    sys.exit()
-
-def OpenUnixSock():
-  # Make sure the socket does not already exist
-  ServerAddress = './uds_socket'
-  try:
-    os.unlink(ServerAddress)
-  except OSError:
-    if os.path.exists(ServerAddress):
-      raise
-  # Create a UDS socket
-  UnixSock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-  # Bind the socket to the port
-  print >>sys.stderr, 'starting up on %s' % ServerAddress
-  UnixSock.bind(ServerAddress)
-  # Listen for incoming connections
-  UnixSock.listen(1)
-  return UnixSock
+def Alarm():
+  print "Alarm"
+  t = Timer(2, Alarm) 
+  t.start()
 
 # Create lists for select
 SerialPort = OpenSerialPort()
@@ -36,30 +19,39 @@ UnixSock = OpenUnixSock()
 ReadList =  [UnixSock, SerialPort]
 WriteList = []
 ErrorList = [UnixSock, SerialPort]
-UnixData = ""
 SerialData = ""
+UnixData = ""
 ClientSocket = None
-while True:
-  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
+
+def ProcessReadable():
+  global SerialData
+  global UnixData
+  global ClientSocket
   for Socket in Readable:
     if Socket is UnixSock:
 #New Connection
       ClientSocket, ClientAddress = UnixSock.accept()
       ReadList.append(ClientSocket)
+      ErrorList.append(ClientSocket)
       print "Connection from", ClientAddress
     elif Socket is SerialPort:
       while SerialPort.inWaiting() > 0:
         SerialData += SerialPort.readline()
       WriteList.append(ClientSocket)
     else:
+      global UnixData
       UnixData += Socket.recv(1024)
       if not UnixData:
         Socket.close()
         ReadList.remove(Socket)
+        ErrorList.remove(Socket)
         ClientSocket = None
       else:
         WriteList.append(SerialPort)
-  
+
+def ProcessWritable():  
+  global SerialData
+  global UnixData
   for Socket in Writable:
    WriteList.remove(Socket)
    if Socket is SerialPort:
@@ -68,3 +60,21 @@ while True:
    else:
     Socket.send(SerialData)
     SerialData = ""
+
+def ProcessErrored():
+  for Socket in Errored:
+    if Socket is UnixSock or Socket is SerialPort:
+      sys.exit()
+    else:
+      Socket.close()
+      ReadList.remove(Socket)
+      ErrorList.remove(Socket)
+
+# MAIN LOOP
+t = Timer(2, Alarm) 
+t.start()
+while True:
+  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList)
+  ProcessReadable()
+  ProcessWritable()
+  ProcessErrored()
