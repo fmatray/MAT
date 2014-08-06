@@ -4,6 +4,7 @@ import socket
 import sys
 import os
 import serial
+import MySQLdb
 from com import *
 from schedule import *
 
@@ -69,14 +70,23 @@ def ProcessErrored():
       ErrorList.remove(Socket)
 
 # MAIN LOOP
-Schedule()
-while True:
-  s = GetSerialData()
-  if s <> "":
-    UnixData += s
-    WriteList.append(SerialPort)
-    ResetSerialData()
-  Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList, 10)
-  ProcessReadable()
-  ProcessWritable()
-  ProcessErrored()
+try :
+  DataBase = MySQLdb.connect(host="localhost", # your host, usually localhost
+    user="arduino", # your username
+    passwd="toto", # your password
+    db="arduino") # name of the data base
+  Sch = Schedule(DataBase)
+
+  while True:
+   s = Sch.GetSerialData()
+   if s <> "":
+     UnixData += s
+     WriteList.append(SerialPort)
+     Sch.ResetSerialData()
+   Readable, Writable, Errored = select.select(ReadList, WriteList, ErrorList, 10)
+   ProcessReadable()
+   ProcessWritable()
+   ProcessErrored()
+except Exception, e:
+  print e
+  sys.exit()
