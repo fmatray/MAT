@@ -11,6 +11,7 @@ try :
     user="arduino", # your username
     passwd="toto", # your password
     db="arduino") # name of the data base
+  DataBase.autocommit(True)
   Sch = Schedule(DataBase)
   Com = Communication()
 
