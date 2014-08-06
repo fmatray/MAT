@@ -50,9 +50,9 @@ class Communication:
     for Socket in self.Readable:
       if Socket is self.UnixSock:
         #New Connection
-        self.ClientSocket, ClientAddress = UnixSock.accept()
-        self.ReadList.append(ClientSocket)
-        self.ErrorList.append(ClientSocket)
+        self.ClientSocket, ClientAddress = self.UnixSock.accept()
+        self.ReadList.append(self.ClientSocket)
+        self.ErrorList.append(self.ClientSocket)
         print "Connection from", ClientAddress
       elif Socket is self.SerialPort:
         while self.SerialPort.inWaiting() > 0:
@@ -61,7 +61,7 @@ class Communication:
         if self.ClientSocket == None:
           self.SerialData = ""
         else:
-          self.WriteList.append(ClientSocket)
+          self.WriteList.append(self.ClientSocket)
       else:
         self.UnixData += Socket.recv(1024)
         if not self.UnixData:
