@@ -3,18 +3,22 @@ import time
 import datetime
 import MySQLdb
 import sys
-import imaplib
 import copy
 from email import *
 
 class Schedule:
   SerialData = ""
-  EmailList = []
+  CheckList = []
   def __init__(self, DataBase):
     try:
       self.Cursor = DataBase.cursor()
-      E = ImapEmail("imap.mail.me.com", "frederic.matray", "iit2kb0p") 
-      self.EmailList.append(E)
+      self.Cursor.execute("SELECT * FROM emails")
+      for Row in self.Cursor.fetchall():
+        if Row[5] == True:
+          E = ImapEmail(Row[1], Row[2], Row[3], Row[4], Row[5]) 
+        else:
+          E = PopEmail(Row[1], Row[2], Row[3], Row[4], Row[5]) 
+        self.CheckList.append(E)
       self.Schedule()
     except Exception, e:
       print e
@@ -49,8 +53,8 @@ class Schedule:
     for ID in IDList:
       self.Cursor.execute("UPDATE alarm SET isactive=0 WHERE ID =" + str(ID))
   
-  def Emails(self):
-    for E in self.EmailList:
+  def CheckStatus(self):
+    for E in self.CheckList:
       if E.Check() == True:
         self.SerialData += "notification:1\n"
   
@@ -61,6 +65,6 @@ class Schedule:
     self.SerialData = ""
 
   def Schedule(self):
-    self.Emails()
+    self.CheckStatus()
     self.Alarms()
 
