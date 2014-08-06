@@ -3,19 +3,23 @@ import time
 import datetime
 import MySQLdb
 import sys
-from threading import Timer
+import imaplib
+import copy
+from email import *
 
 class Schedule:
   SerialData = ""
+  EmailList = []
   def __init__(self, DataBase):
     try:
       self.Cursor = DataBase.cursor()
+      E = ImapEmail("imap.mail.me.com", "frederic.matray", "iit2kb0p") 
+      self.EmailList.append(E)
       self.Schedule()
     except Exception, e:
       print e
-      DataBase.close()
-      sys.exit()
-
+      raise
+       
   def Alarms(self):
     IDList = []
     LocalTime = datetime.datetime.now()
@@ -45,6 +49,11 @@ class Schedule:
     for ID in IDList:
       self.Cursor.execute("UPDATE alarm SET isactive=0 WHERE ID =" + str(ID))
   
+  def Emails(self):
+    for E in self.EmailList:
+      if E.Check() == True:
+        self.SerialData += "notification:1\n"
+  
   def GetSerialData(self):
     return self.SerialData
 
@@ -52,7 +61,6 @@ class Schedule:
     self.SerialData = ""
 
   def Schedule(self):
+    self.Emails()
     self.Alarms()
-    t = Timer(10, self.Schedule)
-    t.start()
 

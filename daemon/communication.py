@@ -28,8 +28,7 @@ class Communication:
       self.SerialPort =  serial.Serial('/dev/ttyACM0', 9600)
     except Exception, e:
       print(e)
-      sys.exit()
-
+      raise
   def OpenUnixSock(self):
    # Make sure the socket does not already exist
    ServerAddress = './uds_socket'
@@ -64,6 +63,9 @@ class Communication:
           self.WriteList.append(self.ClientSocket)
       else:
         self.UnixData += Socket.recv(1024)
+        if self.UnixData == "kill\n":
+          print "I DIED"
+          sys.exit()
         if not self.UnixData:
           Socket.close()
           self.ReadList.remove(Socket)
@@ -85,15 +87,18 @@ class Communication:
   def ProcessErrored(self):
     for Socket in self.Errored:
       if Socket is self.UnixSock or Socket is self.SerialPort:
-        sys.exit()
+        raise Exception() 
       else:
         Socket.close()
         self.ReadList.remove(Socket)
         self.ErrorList.remove(Socket)
   
   def CheckCommunication(self):
-    self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
-    self.ProcessReadable()
-    self.ProcessWritable()
-    self.ProcessErrored()
-
+    try:
+      self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
+      self.ProcessReadable()
+      self.ProcessWritable()
+      self.ProcessErrored()
+    except Exception, e:
+      print e
+      raise
