@@ -36,11 +36,14 @@ class Schedule:
     self.SerialData = ""
 
   def Schedule(self):
-    print "toto"
     AlarmList = self.GetAlarms()
     LocalTime = time.localtime()
     for Alarm in AlarmList:
-      if Alarm < LocalTime:
+      AlarmMax = Alarm
+      AlarmMax[4] += 1 
+      print Alarm
+      print AlarmMax
+      if Alarm < LocalTime and LocalTime < AlarmMax:
         print "ALARM"
         self.SerialData = "alarm\n"
         AlarmList.remove(Alarm)
