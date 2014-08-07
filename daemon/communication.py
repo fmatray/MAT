@@ -56,7 +56,6 @@ class Communication:
       elif Socket is self.SerialPort:
         while self.SerialPort.inWaiting() > 0:
           self.SerialData += self.SerialPort.readline()
-          print self.SerialData
         if self.ClientSocket == None:
           self.SerialData = ""
         else:
