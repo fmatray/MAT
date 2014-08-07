@@ -1,16 +1,9 @@
 #!/usr/bin/python
 import imaplib
 import poplib
+import basecheck
 
-class Email:
-  def __init__(self, Command, Argument):
-    self.Command = Command
-    self.Argument = Argument
-
-  def Action(self):
-    return str(self.Command) + ":" + str(self.Argument)
-
-class ImapEmail(Email):
+class ImapEmail(Check):
   Server = ""
   Port = 0
   Login = ""
@@ -19,7 +12,7 @@ class ImapEmail(Email):
   LastUnReadCount = 0
   LastMessagesCount = 0
   def __init__(self, Server, Port, Login, Password, Ssl, Command, Argument):
-    Email.__init__(self, Command, Argument)
+    Check.__init__(self, Command, Argument)
     if Port == 0:
       if Ssl == True:
         Port = 993
@@ -61,7 +54,7 @@ class ImapEmail(Email):
       self.OpenConnection()
       return ""
 
-class PopEmail(Email):
+class PopEmail(Check):
   Server = "" 
   Port = 0
   Login = ""
@@ -69,7 +62,7 @@ class PopEmail(Email):
   Ssl = 0
   LastMessagesCount = 0
   def __init__(self, Server, Port, Login, Password, Ssl, Commannd, Argument):
-    Email.__init__(self, Commannd, Argument)
+    Check.__init__(self, Commannd, Argument)
     if Port == 0:
       if Ssl == True:
         Port = 995
