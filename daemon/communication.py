@@ -56,6 +56,7 @@ class Communication:
       elif Socket is self.SerialPort:
         while self.SerialPort.inWaiting() > 0:
           self.SerialData += self.SerialPort.readline()
+          
         if self.ClientSocket == None:
           self.SerialData = ""
         else:
@@ -96,8 +97,11 @@ class Communication:
     try:
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
       self.ProcessReadable()
+      SerialData = self.SerialData
+      UnixData = self.UnixData
       self.ProcessWritable()
       self.ProcessErrored()
+      return (SerialData, UnixData)
     except Exception, e:
       print e
       raise
