@@ -6,4 +6,4 @@ class BaseCheck:
     self.Argument = Argument
 
   def Action(self):
-    return str(self.Command) + ":" + str(self.Argument)
+    return str(self.Command) + ":" + str(self.Argument) + '\n'
