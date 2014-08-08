@@ -19,16 +19,7 @@ class Schedule:
       self.Cursor = DataBase.cursor()
     #  self.InitEmailList()
     #  self.InitAlarmList()
-      self.Temperature = Temperature("", "")
-      self.Light = Light("", "")
-      self.Sound = Sound("", "")
-      self.LongButton = LongButton("", "")
-      self.ShortButton = ShortButton("", "")
-      self.CheckList.append(self.Temperature)
-      self.CheckList.append(self.Light)
-      self.CheckList.append(self.Sound)
-      self.CheckList.append(self.LongButton)
-      self.CheckList.append(self.ShortButton)
+      self.InitSensorList()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
     except Exception, e:
@@ -55,6 +46,24 @@ class Schedule:
         WeekDays.append(Row[i])
       A = Alarm(Date, WeekDays, Row[16], Row[17])
       self.CheckList.append(A)
+
+  def InitSensorList(self):
+    self.Cursor.execute("SELECT Sensors.*, Actions.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID")
+    for Row in self.Cursor.fetchall():
+      S = None
+      if Row[1] == "Temperature":
+        S  = Temperature(Row[5], Row[6], Row[9], Row[10])
+      elif Row[1] == "Light":
+        S = Light(Row[5], Row[6], Row[9], Row[10])
+      elif Row[1] == "Sound":
+        S = Sound(Row[5], Row[6], Row[9], Row[10])
+      elif Row[1] == "LongButton":
+        S = LongButton(Row[5], Row[6], Row[9], Row[10])
+      elif Row[1] == "ShortButton":
+        S = ShortButton(Row[5], Row[6], Row[9], Row[10])
+      if S != None:
+        self.CheckList.append(S)
+    
   
   def CheckStatus(self):
     for Element in self.CheckList:
@@ -65,15 +74,14 @@ class Schedule:
       return
     for Line in self.ParseLine.split(SerialData):
       ParseList = self.ParseElement.split(Line)
-      if ParseList[0] == "temperature": 
-        self.Temperature.Update(float(ParseList[1]))
-      elif ParseList[0] == "light":
-        self.Light.Update(float(ParseList[1]))
-      elif ParseList[0] == "sound":
-        self.Sound.Update(float(ParseList[1]))
-      elif ParseList[0] == "button":
-        self.ShortButton.Update(float(ParseList[1]))
-        self.LongButton.Update(float(ParseList[2]))
+      for Element in self.CheckList:
+        if ParseList[0] == Element.GetSensorName(): 
+          Element.Update(float(ParseList[1]))
+        elif ParseList[0] == "button":
+          if Element.GetSensorName() == "shortbutton":  
+            E.Update(float(ParseList[1]))
+          elif Element.GetSensorName() == "longbutton":  
+            E.Update(float(ParseList[2]))
 
   def GetSerialData(self):
     return self.SerialData
