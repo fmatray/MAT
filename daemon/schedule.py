@@ -76,12 +76,12 @@ class Schedule:
       ParseList = self.ParseElement.split(Line)
       for Element in self.CheckList:
         if ParseList[0] == Element.GetSensorName(): 
-          Element.Update(float(ParseList[1]))
+          self.SerialData += Element.Update(float(ParseList[1]))
         elif ParseList[0] == "button":
           if Element.GetSensorName() == "shortbutton":  
-            E.Update(float(ParseList[1]))
+            self.SerialData += Element.Update(float(ParseList[1]))
           elif Element.GetSensorName() == "longbutton":  
-            E.Update(float(ParseList[2]))
+            self.SerialData += Element.Update(float(ParseList[2]))
 
   def GetSerialData(self):
     return self.SerialData
