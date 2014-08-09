@@ -2,7 +2,6 @@
 import socket
 import sys
 import os
-import serial
 import select
 
 class Communication:
@@ -25,7 +24,8 @@ class Communication:
   # Open Serial Port
   def OpenSerialPort(self):
     try:
-      self.SerialPort =  serial.Serial('/dev/ttyACM0', 9600)
+      self.SerialPort = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      Self.SerialPort.connect("127.0.0.1", 6571)
     except Exception, e:
       print(e)
       raise
@@ -54,8 +54,7 @@ class Communication:
         self.ErrorList.append(self.ClientSocket)
         print "Connection from", ClientAddress
       elif Socket is self.SerialPort:
-        while self.SerialPort.inWaiting() > 0:
-          self.SerialData += self.SerialPort.readline()
+        self.SerialData += self.SerialPort.recv(1024)
           
         if self.ClientSocket == None:
           self.SerialData = ""
@@ -78,7 +77,7 @@ class Communication:
     for Socket in self.Writable:
       self.WriteList.remove(Socket)
       if Socket is self.SerialPort:
-        Socket.write(self.UnixData)
+        Socket.send(self.UnixData)
         self.UnixData = ""
       else:
         Socket.send(self.SerialData)
