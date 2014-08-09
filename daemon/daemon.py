@@ -18,12 +18,12 @@ try :
 
   while True:
    Sch.Schedule()
-   s = Sch.GetSerialData()
+   s = Sch.GetArduinoData()
    if s <> "":
      Com.AppendUnixData(s)
-     Sch.ResetSerialData()
-   (SerialData, UnixData) = Com.CheckCommunication()
-   Sch.UpdateSensor(SerialData)
+     Sch.ResetArduinoData()
+   (ArduinoData, UnixData) = Com.CheckCommunication()
+   Sch.UpdateSensor(ArduinoData)
 
 except Exception, e:
   exc_type, exc_value, exc_traceback = sys.exc_info()

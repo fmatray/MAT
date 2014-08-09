@@ -3,32 +3,26 @@ import socket
 import sys
 import os
 import select
-
+from arduino import *
+    
 class Communication:
   def __init__(self):
-    self.OpenSerialPort()
     self.OpenUnixSock()
-    self.SerialData = ""
+    self.ArduinoData = ""
     self.UnixData = ""
     self.ClientSocket = None
-    self.ReadList =  [self.UnixSock, self.SerialPort]
+    self.Arduino = Arduino()
+    self.ReadList =  [self.UnixSock, self.Arduino.Socket()]
     self.WriteList = []
-    self.ErrorList = [self.UnixSock, self.SerialPort]
+    self.ErrorList = [self.UnixSock, self.Arduino.Socket()]
   
   def AppendUnixData(self, s):
     self.UnixData += s
-    self.WriteList.append(self.SerialPort)
-  def AppendSerialData(self, s):
-    self.SerialData += s
+    self.WriteList.append(self.Arduino.Socket())
+
+  def AppendArduinoData(self, s):
+    self.ArduinoData += s
     self.WriteList.append(self.UnixSock)
-  # Open Serial Port
-  def OpenSerialPort(self):
-    try:
-      self.SerialPort = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      Self.SerialPort.connect("127.0.0.1", 6571)
-    except Exception, e:
-      print(e)
-      raise
   def OpenUnixSock(self):
    # Make sure the socket does not already exist
    ServerAddress = './uds_socket'
@@ -53,11 +47,10 @@ class Communication:
         self.ReadList.append(self.ClientSocket)
         self.ErrorList.append(self.ClientSocket)
         print "Connection from", ClientAddress
-      elif Socket is self.SerialPort:
-        self.SerialData += self.SerialPort.recv(1024)
-          
+      elif Socket is self.Arduino.Socket():
+        self.ArduinoData += self.Arduino.Readline()
         if self.ClientSocket == None:
-          self.SerialData = ""
+          self.ArduinoData = ""
         else:
           self.WriteList.append(self.ClientSocket)
       else:
@@ -71,21 +64,21 @@ class Communication:
           self.ErrorList.remove(Socket)
           self.ClientSocket = None
         else:
-          self.WriteList.append(self.SerialPort)
+          self.WriteList.append(self.Arduino.Socket())
 
   def ProcessWritable(self):
     for Socket in self.Writable:
       self.WriteList.remove(Socket)
-      if Socket is self.SerialPort:
-        Socket.send(self.UnixData)
+      if Socket is self.Arduino.Socket():
+        self.Arduino.Send(self.UnixData)
         self.UnixData = ""
       else:
-        Socket.send(self.SerialData)
-        self.SerialData = ""
+        Socket.send(self.ArduinoData)
+        self.ArduinoData = ""
 
   def ProcessErrored(self):
     for Socket in self.Errored:
-      if Socket is self.UnixSock or Socket is self.SerialPort:
+      if Socket is self.UnixSock or Socket is self.Arduino.Socket():
         raise Exception() 
       else:
         Socket.close()
@@ -96,11 +89,11 @@ class Communication:
     try:
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
       self.ProcessReadable()
-      SerialData = self.SerialData
+      ArduinoData = self.ArduinoData
       UnixData = self.UnixData
       self.ProcessWritable()
       self.ProcessErrored()
-      return (SerialData, UnixData)
+      return (ArduinoData, UnixData)
     except Exception, e:
       print e
       raise

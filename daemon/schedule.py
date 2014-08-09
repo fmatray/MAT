@@ -10,7 +10,7 @@ from alarm import *
 from sensor import *
 
 class Schedule:
-  SerialData = ""
+  ArduinoData = ""
   CheckList = []
   def __init__(self, DataBase):
     try:
@@ -67,27 +67,27 @@ class Schedule:
   
   def CheckStatus(self):
     for Element in self.CheckList:
-      self.SerialData += Element.Check()
+      self.ArduinoData += Element.Check()
   
-  def UpdateSensor(self, SerialData):
-    if SerialData == "":
+  def UpdateSensor(self, ArduinoData):
+    if ArduinoData == "":
       return
-    for Line in self.ParseLine.split(SerialData):
+    for Line in self.ParseLine.split(ArduinoData):
       ParseList = self.ParseElement.split(Line)
       for Element in self.CheckList:
         if ParseList[0] == Element.GetSensorName(): 
-          self.SerialData += Element.Update(float(ParseList[1]))
+          self.ArduinoData += Element.Update(float(ParseList[1]))
         elif ParseList[0] == "button":
           if Element.GetSensorName() == "shortbutton":  
-            self.SerialData += Element.Update(float(ParseList[1]))
+            self.ArduinoData += Element.Update(float(ParseList[1]))
           elif Element.GetSensorName() == "longbutton":  
-            self.SerialData += Element.Update(float(ParseList[2]))
+            self.ArduinoData += Element.Update(float(ParseList[2]))
 
-  def GetSerialData(self):
-    return self.SerialData
+  def GetArduinoData(self):
+    return self.ArduinoData
 
-  def ResetSerialData(self):
-    self.SerialData = ""
+  def ResetArduinoData(self):
+    self.ArduinoData = ""
 
   def Schedule(self):
     self.LocalTime = datetime.datetime.now()
