@@ -9,11 +9,15 @@ class Arduino:
       print(e)
       raise
   def Send(self, Data):
-    return self.Console.write(Data)
+    if Data == "":
+       return ""
+    for D in Data.split("\n"):
+      self.Console.write(D + "\n")
 
   def Readline(self):
-    R = self.Console.readline()
-    return R
+    Data = self.Console.readline()
+    print "Received :" + Data
+    return Data
 
   def Socket(self):
     return self.Console

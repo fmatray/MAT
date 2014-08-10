@@ -36,6 +36,8 @@ class DataBase:
   def InitAlarmList(self):
     CheckList = list()
     self.Cursor.execute("SELECT Alarms.*, Actions.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID")
+    LastID = 0
+    A = None
     for Row in self.Cursor.fetchall():
       Date = list()
       for i in range(1, 6):
@@ -43,8 +45,14 @@ class DataBase:
       WeekDays = list()
       for i in range(6, 13):
         WeekDays.append(Row[i])
-      A = Alarm(Date, WeekDays, Row[16], Row[17])
-      CheckList.append(A)
+      if LastID != Row[0]:
+        if A != None:
+          CheckList.append(A)
+        A = Alarm(Date, WeekDays, Row[16], Row[17])
+        LastID = Row[0]
+      else:
+        A.AddAction(Row[16], Row[17])
+    CheckList.append(A)
     return CheckList
 
   def InitSensorList(self):

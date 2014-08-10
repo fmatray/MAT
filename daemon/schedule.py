@@ -15,9 +15,9 @@ class Schedule:
     try:
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
-      self.CheckList += DataBase.InitEmailList()
+      #self.CheckList += DataBase.InitEmailList()
       self.CheckList += DataBase.InitAlarmList()
-      self.CheckList += DataBase.InitSensorList()
+      #self.CheckList += DataBase.InitSensorList()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
     except Exception, e:
