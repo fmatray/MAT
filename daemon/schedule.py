@@ -82,7 +82,6 @@ class Schedule:
             self.ArduinoData += Element.Update(float(ParseList[1]))
           elif Element.GetSensorName() == "longbutton":  
             self.ArduinoData += Element.Update(float(ParseList[2]))
-
   def GetArduinoData(self):
     return self.ArduinoData
 

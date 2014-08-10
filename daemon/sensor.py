@@ -5,6 +5,7 @@ from basecheck import *
 class Sensor(BaseCheck):
   Value = 0.0 
   ActionSent = False
+  Interval
   UpdateCommand = ""
   def __init__(self, Name, Threshold, MinMax, Command, Argument):
     BaseCheck.__init__(self, Command, Argument)
@@ -27,16 +28,13 @@ class Sensor(BaseCheck):
     print self.Value
     Ret = ""
     if (datetime.datetime.now() - self.LastUpdateTime).seconds > 30:
-      print "Update Command"
-      Ret = self.UpdateCommand
+      Ret = self.UpdateCommand + "\n"
     if self.ActionSent == True:
       return Ret    
     if self.MinMax == False and self.Value < self.Threshold:
-      print "Min"
       self.ActionSent = True
       Ret += self.Action()
     if self.MinMax == True and self.Value > self.Threshold:
-      print "Max"
       self.ActionSent = True
       Ret += self.Action()
     return Ret
