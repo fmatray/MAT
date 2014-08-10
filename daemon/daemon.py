@@ -1,18 +1,14 @@
 #!/usr/bin/python
 import sys
 import os
-import MySQLdb
 import traceback
 from communication import *
 from schedule import *
+from database import *
 
 # MAIN LOOP
 try :
-  DataBase = MySQLdb.connect(host="localhost", # your host, usually localhost
-    user="arduino", # your username
-    passwd="toto", # your password
-    db="arduino") # name of the data base
-  DataBase.autocommit(True)
+  DataBase = DataBase()
   Sch = Schedule(DataBase)
   Com = Communication()
 

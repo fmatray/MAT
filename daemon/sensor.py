@@ -5,7 +5,7 @@ from basecheck import *
 class Sensor(BaseCheck):
   Value = 0.0 
   ActionSent = False
-  Interval
+  Interval = 120
   UpdateCommand = ""
   def __init__(self, Name, Threshold, MinMax, Command, Argument):
     BaseCheck.__init__(self, Command, Argument)
@@ -13,6 +13,9 @@ class Sensor(BaseCheck):
     self.Threshold = Threshold
     self.MinMax = MinMax
     self.LastUpdateTime = datetime.datetime.now() 
+
+  def IsSensor(self):
+    return True
 
   def Update(self, Value):
     self.Value = Value
@@ -27,7 +30,7 @@ class Sensor(BaseCheck):
   def Check(self):
     print self.Value
     Ret = ""
-    if (datetime.datetime.now() - self.LastUpdateTime).seconds > 30:
+    if self.Interval > 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds > self.Interval:
       Ret = self.UpdateCommand + "\n"
     if self.ActionSent == True:
       return Ret    
@@ -60,7 +63,9 @@ class Sound(Sensor):
 class LongButton(Sensor):
   def __init__(self, Threshold, MinMax, Command, Argument):
     Sensor.__init__(self, "longbutton", Threshold, MinMax, Command, Argument)
+    self.Interval = 0
 
 class ShortButton(Sensor):
   def __init__(self, Threshold, MinMax, Command, Argument):
     Sensor.__init__(self, "shortbutton", Threshold, MinMax, Command, Argument)
+    self.Interval = 0

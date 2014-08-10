@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import time
 import datetime
-import MySQLdb
 import sys
 import copy
 import re
@@ -16,54 +15,14 @@ class Schedule:
     try:
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
-      self.Cursor = DataBase.cursor()
-    #  self.InitEmailList()
-    #  self.InitAlarmList()
-      self.InitSensorList()
+      self.CheckList += DataBase.InitEmailList()
+      self.CheckList += DataBase.InitAlarmList()
+      self.CheckList += DataBase.InitSensorList()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
     except Exception, e:
       print e
       raise
-       
-  def InitEmailList(self):
-    self.Cursor.execute("SELECT Emails . * , Actions . * FROM Emails, EventActions, Actions WHERE Emails.ID = EventActions.IDEmail AND EventActions.IDAction = Actions.ID")
-    for Row in self.Cursor.fetchall():
-      if Row[5] == True:
-        E = ImapEmail(Row[1], Row[2], Row[3], Row[4], Row[5], Row[9], Row[10]) 
-      else:
-        E = PopEmail(Row[1], Row[2], Row[3], Row[4], Row[5], Row[9], Row[10]) 
-      self.CheckList.append(E)
-
-  def InitAlarmList(self):
-    self.Cursor.execute("SELECT Alarms.*, Actions.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID")
-    for Row in self.Cursor.fetchall():
-      Date = list()
-      for i in range(1, 6):
-        Date.append(Row[i])
-      WeekDays = list()
-      for i in range(6, 13):
-        WeekDays.append(Row[i])
-      A = Alarm(Date, WeekDays, Row[16], Row[17])
-      self.CheckList.append(A)
-
-  def InitSensorList(self):
-    self.Cursor.execute("SELECT Sensors.*, Actions.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID")
-    for Row in self.Cursor.fetchall():
-      S = None
-      if Row[1] == "Temperature":
-        S  = Temperature(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "Light":
-        S = Light(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "Sound":
-        S = Sound(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "LongButton":
-        S = LongButton(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "ShortButton":
-        S = ShortButton(Row[5], Row[6], Row[9], Row[10])
-      if S != None:
-        self.CheckList.append(S)
-    
   
   def CheckStatus(self):
     for Element in self.CheckList:
@@ -75,6 +34,8 @@ class Schedule:
     for Line in self.ParseLine.split(ArduinoData):
       ParseList = self.ParseElement.split(Line)
       for Element in self.CheckList:
+        if Element.IsSensor() == False:
+          continue
         if ParseList[0] == Element.GetSensorName(): 
           self.ArduinoData += Element.Update(float(ParseList[1]))
         elif ParseList[0] == "button":

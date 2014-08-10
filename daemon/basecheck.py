@@ -9,3 +9,6 @@ class BaseCheck:
     self.Argument = Argument
   def Action(self):
     return str(self.Command) + ":" + str(self.Argument) + '\n'
+
+  def IsSensor(self):
+    return False

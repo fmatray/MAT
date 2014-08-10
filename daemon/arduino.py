@@ -9,12 +9,10 @@ class Arduino:
       print(e)
       raise
   def Send(self, Data):
-    print "Send : " + Data
     return self.Console.write(Data)
 
   def Readline(self):
     R = self.Console.readline()
-    print "Reading : " + R
     return R
 
   def Socket(self):
