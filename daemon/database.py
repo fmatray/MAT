@@ -20,7 +20,7 @@ class DataBase:
       print e
       raise
   def Close(self):
-    self.DataBase.cole()
+    self.DataBase.close()
 
   def InitEmailList(self):
     CheckList = list()
@@ -52,6 +52,7 @@ class DataBase:
         LastID = Row[0]
       else:
         A.AddAction(Row[16], Row[17])
+    print A.Action()
     CheckList.append(A)
     return CheckList
 

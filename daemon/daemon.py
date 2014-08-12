@@ -40,5 +40,5 @@ except Exception, e:
   print "*** format_tb:"
   print repr(traceback.format_tb(exc_traceback))
   print "*** tb_lineno:", exc_traceback.tb_lineno
-  DataBase.close()
+  DataBase.Close()
   sys.exit()
