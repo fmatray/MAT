@@ -6,8 +6,15 @@ import re
 from email import *
 from alarm import *
 from sensor import *
+from action import *
 
 class DataBase:
+  Req = {"Alarms" : "SELECT Actions.*, Alarms.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID",
+          "Emails" : "SELECT Actions.*, Emails.* FROM Emails, EventActions, Actions WHERE Emails.ID = EventActions.IDEmail AND EventActions.IDAction = Actions.ID",
+          "Sensors": "SELECT Actions.*, Sensors.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID"}
+  Function = {"Alarms" : "self.GetAlarm",
+              "Emails" : "self.GetEmail",
+              "Sensors": "self.GetSensor"}
   def __init__(self):
     try:
       self.DataBase = MySQLdb.connect(host="localhost", # your host, usually localhost
@@ -22,56 +29,42 @@ class DataBase:
   def Close(self):
     self.DataBase.close()
 
-  def InitEmailList(self):
-    CheckList = list()
-    self.Cursor.execute("SELECT Emails . * , Actions . * FROM Emails, EventActions, Actions WHERE Emails.ID = EventActions.IDEmail AND EventActions.IDAction = Actions.ID")
-    for Row in self.Cursor.fetchall():
-      if Row[5] == True:
-        E = ImapEmail(Row[1], Row[2], Row[3], Row[4], Row[5], Row[9], Row[10]) 
-      else:
-        E = PopEmail(Row[1], Row[2], Row[3], Row[4], Row[5], Row[9], Row[10]) 
-      CheckList.append(E)
-    return CheckList
+  def GetAction(self, Row):
+    if Row[2] != "": 
+      Act = ArduinoAction(Row[2], Row[3])
+    if Row[4] != "":
+      Act = PushOverAction(Row[4], Row[5], Row[6])
+    return Act
 
-  def InitAlarmList(self):
+  def InitElements(self, List):
     CheckList = list()
-    self.Cursor.execute("SELECT Alarms.*, Actions.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID")
+    self.Cursor.execute(self.Req[List])
     LastID = 0
-    A = None
+    Element = None
     for Row in self.Cursor.fetchall():
-      Date = list()
-      for i in range(1, 6):
-        Date.append(Row[i])
-      WeekDays = list()
-      for i in range(6, 13):
-        WeekDays.append(Row[i])
-      if LastID != Row[0]:
-        if A != None:
-          CheckList.append(A)
-        A = Alarm(Date, WeekDays)
-      if Row[16] != "": 
-        A.AddAction(Row[16], Row[17])
-      if Row[18] != "":
-        A.AddPushOverAction(Row[18], Row[19], Row[19])
-      LastID = Row[0]
-    CheckList.append(A)
+      if LastID != Row[7]:
+        if Element != None:
+          CheckList.append(Element)
+        Element = eval(self.Function[List])(Row)
+        LastID = Row[7]
+      Element.AddAction(self.GetAction(Row)) 
+    CheckList.append(Element)
     return CheckList
 
-  def InitSensorList(self):
-    CheckList = list()
-    self.Cursor.execute("SELECT Sensors.*, Actions.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID")
-    for Row in self.Cursor.fetchall():
-      S = None
-      if Row[1] == "Temperature":
-        S  = Temperature(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "Light":
-        S = Light(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "Sound":
-        S = Sound(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "LongButton":
-        S = LongButton(Row[5], Row[6], Row[9], Row[10])
-      elif Row[1] == "ShortButton":
-        S = ShortButton(Row[5], Row[6], Row[9], Row[10])
-      if S != None:
-        CheckList.append(S)
-    return CheckList
+  def GetEmail(self, Row):
+    if Row[12] == True:
+      return ImapEmail(Row[8], Row[9], Row[10], Row[11], Row[12]) 
+    else:
+      return PopEmail(Row[8], Row[9], Row[10], Row[11], Row[12]) 
+
+  def GetAlarm(self, Row):
+    Date = list()
+    for i in range(8, 13):
+      Date.append(Row[i])
+    WeekDays = list()
+    for i in range(13, 20):
+      WeekDays.append(Row[i])
+    return Alarm(Date, WeekDays)
+
+  def GetSensor(self, Row):
+    return eval(Row[8])(Row[12], Row[13])

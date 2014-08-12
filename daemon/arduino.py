@@ -15,7 +15,7 @@ class Arduino:
     for D in Data.split('\n'):
       if D != "" and D[0] != '\r':
         print "Sending : " + D
-        print self.Console.write(D + '\n')
+        self.Console.write(D + '\n')
         
   def Readline(self):
     Data = ""

@@ -4,17 +4,13 @@ import datetime
 from basecheck import *
 
 class Alarm(BaseCheck):
-  def __init__(self, Date, WeekDays, Command = "", Argument = ""):
-    try:
-      BaseCheck.__init__(self, Command, Argument)
-      self.Date = Date
-      self.WeekDays = WeekDays
-    except Exception, e:
-      print e
+  def __init__(self, Date, WeekDays):
+    BaseCheck.__init__(self)
+    self.Date = Date
+    self.WeekDays = WeekDays
 
   def Check(self):
 # ALARM on date and time 
-    print "CHECK ALARM"
     LocalTime = datetime.datetime.now()
     Date = list()
     i = 0

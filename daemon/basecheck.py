@@ -3,10 +3,12 @@ from  action import *
 
 class BaseCheck:
   ActionList = []
-  def __init__(self, Command = "", Argument = ""):
-      self.AddAction(Command, Argument)
+  def __init__(self):
+    return 
+  def AddAction(self, Act):
+    self.ActionList.append(Act)
 
-  def AddAction(self, Command, Argument = ""):
+  def AddArduinoAction(self, Command, Argument = ""):
     if Command != "":
       self.ActionList.append(Action(Command, Argument))
 

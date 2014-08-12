@@ -11,8 +11,8 @@ class ImapEmail(BaseCheck):
   Ssl = 0
   LastUnReadCount = 0
   LastMessagesCount = 0
-  def __init__(self, Server, Port, Login, Password, Ssl, Command, Argument):
-    BaseCheck.__init__(self, Command, Argument)
+  def __init__(self, Server, Port, Login, Password, Ssl):
+    BaseCheck.__init__(self)
     if Port == 0:
       if Ssl == True:
         Port = 993
@@ -46,7 +46,6 @@ class ImapEmail(BaseCheck):
       MessagesCount = int(Data[0].split()[2].strip(').,]'))
       Ret = ""
       if MessagesCount > self.LastMessagesCount and UnReadCount > self.LastUnReadCount:
-        print "TOTO"
         Ret = self.Action() 
       self.LastUnReadCount = UnReadCount
       self.LastMessagesCount = MessagesCount
@@ -62,8 +61,8 @@ class PopEmail(BaseCheck):
   Password = "" 
   Ssl = 0
   LastMessagesCount = 0
-  def __init__(self, Server, Port, Login, Password, Ssl, Commannd, Argument):
-    BaseCheck.__init__(self, Commannd, Argument)
+  def __init__(self, Server, Port, Login, Password, Ssl):
+    BaseCheck.__init__(self)
     if Port == 0:
       if Ssl == True:
         Port = 995
