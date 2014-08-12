@@ -48,11 +48,12 @@ class DataBase:
       if LastID != Row[0]:
         if A != None:
           CheckList.append(A)
-        A = Alarm(Date, WeekDays, Row[16], Row[17])
-        LastID = Row[0]
-      else:
+        A = Alarm(Date, WeekDays)
+      if Row[16] != "": 
         A.AddAction(Row[16], Row[17])
-    print A.Action()
+      if Row[18] != "":
+        A.AddPushOverAction(Row[18], Row[19], Row[19])
+      LastID = Row[0]
     CheckList.append(A)
     return CheckList
 

@@ -4,7 +4,7 @@ import datetime
 from basecheck import *
 
 class Alarm(BaseCheck):
-  def __init__(self, Date, WeekDays, Command, Argument):
+  def __init__(self, Date, WeekDays, Command = "", Argument = ""):
     try:
       BaseCheck.__init__(self, Command, Argument)
       self.Date = Date
