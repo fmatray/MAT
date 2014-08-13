@@ -18,7 +18,6 @@ class Schedule:
       self.CheckList = DataBase.InitElements("Alarms")
       self.CheckList += DataBase.InitElements("Emails")
       self.CheckList += DataBase.InitElements("Sensors")
-      print self.CheckList
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
     except Exception, e:
@@ -44,6 +43,7 @@ class Schedule:
             self.ArduinoData += Element.Update(float(ParseList[1]))
           elif Element.GetSensorName() == "longbutton":  
             self.ArduinoData += Element.Update(float(ParseList[2]))
+
   def GetArduinoData(self):
     return self.ArduinoData
 
