@@ -7,6 +7,7 @@ import re
 from email import *
 from alarm import *
 from sensor import *
+from weather import *
 
 class Schedule:
   def __init__(self, DataBase):
@@ -14,7 +15,8 @@ class Schedule:
       self.CheckList = []
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
-      self.CheckList = DataBase.InitElements()
+      #self.CheckList = DataBase.InitElements()
+      self.CheckList.append(Weather())
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
       self.ArduinoData = ""
