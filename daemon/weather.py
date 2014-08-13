@@ -2,37 +2,56 @@
 from sensor import *
 import pyowm
 import config
+import datetime
 
-class Weather(Sensor):
-  Rain = False 
-  Fog = False 
-  Snow = False
-  Clouds = False
+class Weather(object):
   _Instance = None
  
-  def __new__(Class):
-    if Class._Instance == None:
-      Class._Instance = Sensor
-    return Class._Instance
+  def __new__(cls):
+    if Weather._Instance == None:
+      Weather._Instance = object.__new__(cls)
+    return Weather._Instance
 
   def __init__(self):
     self.City = config.Config.GetKey("Weather", "City") 
     self.Token = config.Config.GetKey("Weather", "Token") 
-    self.owm = pyowm.OWM(self.Token)
-    return
+    self.Owm = pyowm.OWM(self.Token)
+    self.Rain = False 
+    self.Fog = False 
+    self.Snow = False
+    self.Clouds = False
+    self.LastUpdateTime = None 
+    self.Update()
+
+  def Update(self):
+    if self.LastUpdateTime == None or (datetime.datetime.now() - self.LastUpdateTime).seconds > 3600:
+      self.LastUpdateTime = datetime.datetime.now()
+      self.Forecast = self.Owm.three_hours_forecast(self.City)
+      self.Rain = self.Forecast.will_have_rain()
+      self.Fog = self.Forecast.will_have_fog()
+      self.Snow = self.Forecast.will_have_snow()
+      self.Clouds = self.Forecast.will_have_clouds()
+
+  def GetRain(self):
+    return self.Rain
+  def GetFog(self):
+    return self.Fog
+  def GetSnow(self):
+    return self.Snow
+  def GetClouds(self):
+    return self.Clouds
+
+class Rain(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "rain", Threshold, MinMax)
+    self.Weather = Weather() 
+    self.Analogic = False
+    self.Value = self.Weather.GetRain()
 
   def Update(self, Value = ""):
-    return ""
-
+    self.Weather.Update()
+    Sensor.Update(self,self.Weather.GetRain())
+    
   def Check(self):
-    self.forecast = self.owm.three_hours_forecast(self.City)
-    self.Rain = self.forecast.will_have_rain()
-    self.Fog = self.forecast.will_have_fog()
-    self.Snow = self.forecast.will_have_snow()
-    self.Clouds = self.forecast.will_have_clouds()
-    return ""
-
-class Rain(Weather):
-  def __init__(self):
-   Weather.__init__(self)
-   return
+    self.Weather.Update()
+    return Sensor.Check(self)

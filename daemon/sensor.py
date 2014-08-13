@@ -11,6 +11,7 @@ class Sensor(BaseCheck):
     self.LastUpdateTime = datetime.datetime.now() 
     self.Value = 0.0 
     self.ActionSent = False
+    self.Analogic = True
     self.Interval = 120
     self.UpdateCommand = ""
 
@@ -21,24 +22,30 @@ class Sensor(BaseCheck):
     self.Value = Value
     self.LastUpdateTime = datetime.datetime.now() 
     if self.ActionSent == True:
-      if self.MinMax == False and self.Value > self.Threshold:
+      if self.MinMax == False and self.Value >= self.Threshold:
         self.ActionSent = False
-      if self.MinMax == True and self.Value < self.Threshold:
+      if self.MinMax == True and self.Value <= self.Threshold:
         self.ActionSent = False
     return ""
 
   def Check(self):
     Ret = ""
-    if self.Interval > 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds > self.Interval:
+    if self.Interval >= 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds >= self.Interval and self.UpdateCommand != "":
       Ret = self.UpdateCommand + "\n"
     if self.ActionSent == True:
       return Ret    
-    if self.MinMax == False and self.Value < self.Threshold:
-      self.ActionSent = True
-      Ret += self.Action()
-    if self.MinMax == True and self.Value > self.Threshold:
-      self.ActionSent = True
-      Ret += self.Action()
+
+    if self.Analogic == False:
+      if self.Value == self.Threshold:
+        self.ActionSent = True
+        Ret += self.Action()
+    else:
+      if self.MinMax == False and self.Value <= self.Threshold:
+        self.ActionSent = True
+        Ret += self.Action()
+      if self.MinMax == True and self.Value >= self.Threshold:
+        self.ActionSent = True
+        Ret += self.Action()
     return Ret
 
   def GetSensorName(self):

@@ -8,6 +8,7 @@ from email import *
 from alarm import *
 from sensor import *
 from weather import *
+from action import *
 
 class Schedule:
   def __init__(self, DataBase):
@@ -16,7 +17,9 @@ class Schedule:
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
       #self.CheckList = DataBase.InitElements()
-      self.CheckList.append(Weather())
+      R = Rain(True, 1)
+      R.AddAction(ArduinoAction("alarm"))
+      self.CheckList.append(R)
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
       self.ArduinoData = ""
@@ -24,9 +27,8 @@ class Schedule:
       print e
       raise
   
-  def CheckStatus(self):
+  def Check(self):
     for Element in self.CheckList:
-      print Element
       self.ArduinoData += Element.Check()
   
   def UpdateSensor(self, ArduinoData):
@@ -54,6 +56,6 @@ class Schedule:
   def Schedule(self):
     self.LocalTime = datetime.datetime.now()
     if self.LocalTime.second <= 10 and (self.LocalTime - self.LastCheck).seconds > 10:
-      self.CheckStatus()
+      self.Check()
       self.LastCheck = self.LocalTime
 
