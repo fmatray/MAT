@@ -2,6 +2,7 @@
 import sys
 import os
 import traceback
+from config import *
 from communication import *
 from schedule import *
 from database import *
@@ -9,6 +10,8 @@ from database import *
 # MAIN LOOP
 try :
   DataBase = DataBase()
+  Config = DataBase.InitConfig()
+  Config.Show()
   Sch = Schedule(DataBase)
   Com = Communication()
 

@@ -3,10 +3,12 @@ import MySQLdb
 import sys
 import copy
 import re
+from config import *
 from email import *
 from alarm import *
 from sensor import *
 from action import *
+
 
 class DataBase:
   Req = {"Alarms" : "SELECT Actions.*, Alarms.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID",
@@ -68,3 +70,10 @@ class DataBase:
 
   def GetSensor(self, Row):
     return eval(Row[8])(Row[12], Row[13])
+
+  def InitConfig(self):
+    Conf = Config()
+    self.Cursor.execute("SELECT * FROM  `Config` GROUP BY  `Category`")
+    for Row in self.Cursor.fetchall():
+      Conf.AddKey(Row[1], Row[2], Row[3])
+    return Conf
