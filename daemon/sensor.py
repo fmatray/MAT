@@ -3,16 +3,16 @@ import datetime
 from basecheck import *
 
 class Sensor(BaseCheck):
-  Value = 0.0 
-  ActionSent = False
-  Interval = 120
-  UpdateCommand = ""
   def __init__(self, Name, Threshold, MinMax):
     BaseCheck.__init__(self)
     self.Name = Name
     self.Threshold = Threshold
     self.MinMax = MinMax
     self.LastUpdateTime = datetime.datetime.now() 
+    self.Value = 0.0 
+    self.ActionSent = False
+    self.Interval = 120
+    self.UpdateCommand = ""
 
   def IsSensor(self):
     return True

@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
-class Config:
+class Configuration:
   def __init__(self):
     self.Config = dict()
+    global Config
+    Config = self
     return
 
   def AddKey(self, Category, Key, Value):
@@ -16,4 +18,8 @@ class Config:
     return self.Config[Category][Key]
 
   def Show(self):
-    print self.Config
+    for CategoryKey in self.Config:
+      for KeyKey in self.Config[CategoryKey]:
+        print CategoryKey + ":" + KeyKey + ":"  + self.Config[CategoryKey][KeyKey]
+
+Config = Configuration()

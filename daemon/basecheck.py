@@ -2,8 +2,8 @@
 from  action import *
 
 class BaseCheck:
-  ActionList = []
   def __init__(self):
+    self.ActionList = []
     return 
   def AddAction(self, Act):
     self.ActionList.append(Act)

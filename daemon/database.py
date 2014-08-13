@@ -3,7 +3,7 @@ import MySQLdb
 import sys
 import copy
 import re
-from config import *
+import config
 from email import *
 from alarm import *
 from sensor import *
@@ -33,24 +33,32 @@ class DataBase:
 
   def GetAction(self, Row):
     if Row[2] != "": 
-      Act = ArduinoAction(Row[2], Row[3])
+      return ArduinoAction(Row[2], Row[3])
     if Row[4] != "":
-      Act = PushOverAction(Row[4], Row[5], Row[6])
-    return Act
+      return PushOverAction(Row[4], Row[5], Row[6])
+    return None
 
-  def InitElements(self, List):
+  def InitElements(self):
     CheckList = list()
-    self.Cursor.execute(self.Req[List])
-    LastID = 0
-    Element = None
-    for Row in self.Cursor.fetchall():
-      if LastID != Row[7]:
-        if Element != None:
-          CheckList.append(Element)
-        Element = eval(self.Function[List])(Row)
-        LastID = Row[7]
-      Element.AddAction(self.GetAction(Row)) 
-    CheckList.append(Element)
+    for Key in self.Req.keys():
+      self.Cursor.execute(self.Req[Key])
+      LastID = 0
+      Element = None
+      for Row in self.Cursor.fetchall():
+        if LastID != Row[7]:
+          LastID = Row[7]
+          if Element != None:
+            CheckList.append(Element)
+          Element = eval(self.Function[Key])(Row)
+        Act = self.GetAction(Row)
+        if (Act != None):
+          Element.AddAction(Act)
+      CheckList.append(Element)
+    print "----------"
+    print CheckList
+    for i in CheckList:
+      print i 
+      print i.ActionList
     return CheckList
 
   def GetEmail(self, Row):
@@ -72,8 +80,6 @@ class DataBase:
     return eval(Row[8])(Row[12], Row[13])
 
   def InitConfig(self):
-    Conf = Config()
-    self.Cursor.execute("SELECT * FROM  `Config` GROUP BY  `Category`")
+    self.Cursor.execute("SELECT * FROM `Config`")
     for Row in self.Cursor.fetchall():
-      Conf.AddKey(Row[1], Row[2], Row[3])
-    return Conf
+      config.Config.AddKey(Row[1], Row[2], Row[3])

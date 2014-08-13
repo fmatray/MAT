@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import httplib
 import urllib
+import config
 
 class Action:
  def __init__(self):
@@ -19,7 +20,10 @@ class ArduinoAction(Action):
 
 class PushOverAction(Action):
   def __init__(self, Title = "NO TITLE", Message = "NO MESSAGE", Priority = -2):
-
+    self.Token = config.Config.GetKey("PushOver", "Token")
+    self.User = config.Config.GetKey("PushOver", "User")
+    if (self.Token == None or self.User == None):
+      raise KeyError
     self.Title = Title
     self.Message = Message
     self.Priority = Priority
@@ -29,8 +33,8 @@ class PushOverAction(Action):
     conn = httplib.HTTPSConnection("api.pushover.net:443")
     conn.request("POST", "/1/messages.json",
       urllib.urlencode({
-      "token": "aSc5CqmfEq4ERGQpMqUT7UyyQ4SiJv",
-      "user": "u5didSoEPW9xCDpnYoKV85X655ayjc",
+      "token": self.Token, 
+      "user": self.User, 
       "title": self.Title,
       "message": self.Message,
       "priority": self.Priority

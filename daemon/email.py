@@ -4,13 +4,6 @@ import poplib
 from basecheck import *
 
 class ImapEmail(BaseCheck):
-  Server = ""
-  Port = 0
-  Login = ""
-  Password = "" 
-  Ssl = 0
-  LastUnReadCount = 0
-  LastMessagesCount = 0
   def __init__(self, Server, Port, Login, Password, Ssl):
     BaseCheck.__init__(self)
     if Port == 0:
@@ -24,6 +17,8 @@ class ImapEmail(BaseCheck):
     self.Password = Password
     self.Ssl = Ssl
     self.OpenConnection()
+    self.LastUnReadCount = 0
+    self.LastMessagesCount = 0
   
   def OpenConnection(self):
     try:
@@ -55,12 +50,6 @@ class ImapEmail(BaseCheck):
       return ""
 
 class PopEmail(BaseCheck):
-  Server = "" 
-  Port = 0
-  Login = ""
-  Password = "" 
-  Ssl = 0
-  LastMessagesCount = 0
   def __init__(self, Server, Port, Login, Password, Ssl):
     BaseCheck.__init__(self)
     if Port == 0:
@@ -74,6 +63,7 @@ class PopEmail(BaseCheck):
     self.Password = Password
     self.Ssl = Ssl
     self.OpenConnection()
+    self.LastMessagesCount = 0
 
   def OpenConnection(self):
     try:

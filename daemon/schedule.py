@@ -9,23 +9,22 @@ from alarm import *
 from sensor import *
 
 class Schedule:
-  ArduinoData = ""
-  CheckList = []
   def __init__(self, DataBase):
     try:
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
-      self.CheckList = DataBase.InitElements("Alarms")
-      self.CheckList += DataBase.InitElements("Emails")
-      self.CheckList += DataBase.InitElements("Sensors")
+      self.CheckList = DataBase.InitElements()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
+      self.ArduinoData = ""
+      self.CheckList = []
     except Exception, e:
       print e
       raise
   
   def CheckStatus(self):
     for Element in self.CheckList:
+      print Element
       self.ArduinoData += Element.Check()
   
   def UpdateSensor(self, ArduinoData):
