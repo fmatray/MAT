@@ -11,13 +11,13 @@ from sensor import *
 class Schedule:
   def __init__(self, DataBase):
     try:
+      self.CheckList = []
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
       self.CheckList = DataBase.InitElements()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
       self.ArduinoData = ""
-      self.CheckList = []
     except Exception, e:
       print e
       raise

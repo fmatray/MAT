@@ -56,9 +56,11 @@ class DataBase:
       CheckList.append(Element)
     print "----------"
     print CheckList
+    print "----------"
     for i in CheckList:
       print i 
       print i.ActionList
+      print "+++++++++++"
     return CheckList
 
   def GetEmail(self, Row):
