@@ -13,7 +13,7 @@ class Action:
 
 class ArduinoAction(Action):
   Arduino = None
-  def __init__(self, Command, Argument= ""):
+  def __init__(self, Command, Argument= "", Arg3 = "", Arg4 = "", Arg5 = ""):
     if self.Arduino == None:
       self.Arduino = Arduino()
     self.Command = Command
@@ -23,7 +23,7 @@ class ArduinoAction(Action):
     self.Arduino.AddOutputData(str(self.Command) + ":" + str(self.Argument) + '\n')
 
 class PushOverAction(Action):
-  def __init__(self, Title = "NO TITLE", Message = "NO MESSAGE", Priority = -2):
+  def __init__(self, Title = "NO TITLE", Message = "NO MESSAGE", Priority = -2, Arg4 = "", Arg5 = ""):
     Config = Configuration()
     self.Token = Config.GetKey("PushOver", "Token")
     self.User = Config.GetKey("PushOver", "User")

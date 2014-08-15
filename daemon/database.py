@@ -32,11 +32,10 @@ class DataBase:
     self.DataBase.close()
 
   def GetAction(self, Row):
-    if Row[2] != "Arduino": 
-      return ArduinoAction(Row[4], Row[5])
-    if Row[2] != "PushOver":
-      return PushOverAction(Row[4], Row[5], Row[6])
-    return None
+    try:
+      return eval(str(Row[2]) + "Action")(Row[4], Row[5], Row[6], Row[7], Row[8])
+    except:
+      return None
 
   def InitElements(self):
     CheckList = list()
