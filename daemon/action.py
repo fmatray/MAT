@@ -25,10 +25,6 @@ class ArduinoAction(Action):
 class PushOverAction(Action):
   def __init__(self, Title = "NO TITLE", Message = "NO MESSAGE", Priority = -2):
     Config = Configuration()
-    print "______"
-    Config.Show()
-    print Config
-    print "______"
     self.Token = Config.GetKey("PushOver", "Token")
     self.User = Config.GetKey("PushOver", "User")
     if (self.Token == None or self.User == None):

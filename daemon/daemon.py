@@ -11,8 +11,6 @@ from database import *
 try :
   DataBase = DataBase()
   Config = DataBase.InitConfig()
-  print Config
-  Config.Show()
   Sch = Schedule(DataBase)
   Com = Communication()
 

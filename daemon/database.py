@@ -32,9 +32,9 @@ class DataBase:
     self.DataBase.close()
 
   def GetAction(self, Row):
-    if Row[2] != "": 
-      return ArduinoAction(Row[2], Row[3])
-    if Row[4] != "":
+    if Row[2] != "Arduino": 
+      return ArduinoAction(Row[4], Row[5])
+    if Row[2] != "PushOver":
       return PushOverAction(Row[4], Row[5], Row[6])
     return None
 
@@ -45,15 +45,19 @@ class DataBase:
       LastID = 0
       Element = None
       for Row in self.Cursor.fetchall():
-        if LastID != Row[7]:
-          LastID = Row[7]
+        print Row
+        if LastID != Row[9]:
+          LastID = Row[9]
           if Element != None:
             CheckList.append(Element)
           Element = eval(self.Function[Key])(Row)
-        Act = self.GetAction(Row)
-        if (Act != None):
-          Element.AddAction(Act)
-      CheckList.append(Element)
+          print Element
+        if Element != None:  
+          Act = self.GetAction(Row)
+          if (Act != None):
+            Element.AddAction(Act)
+      if Element != None:
+        CheckList.append(Element)
     print "----------"
     print CheckList
     print "----------"
@@ -64,22 +68,25 @@ class DataBase:
     return CheckList
 
   def GetEmail(self, Row):
-    if Row[12] == True:
-      return ImapEmail(Row[8], Row[9], Row[10], Row[11], Row[12]) 
+    if Row[14] == True:
+      return ImapEmail(Row[10], Row[11], Row[12], Row[13], Row[14]) 
     else:
-      return PopEmail(Row[8], Row[9], Row[10], Row[11], Row[12]) 
+      return PopEmail(Row[10], Row[11], Row[12], Row[13], Row[14]) 
 
   def GetAlarm(self, Row):
     Date = list()
-    for i in range(8, 13):
+    for i in range(10, 15):
       Date.append(Row[i])
     WeekDays = list()
-    for i in range(13, 20):
+    for i in range(15, 22):
       WeekDays.append(Row[i])
     return Alarm(Date, WeekDays)
 
   def GetSensor(self, Row):
-    return eval(Row[8])(Row[12], Row[13])
+    try:
+      return eval(Row[10])(Row[14], Row[15])
+    except:
+      return None
 
   def InitConfig(self):
     self.Cursor.execute("SELECT * FROM `Config`")
