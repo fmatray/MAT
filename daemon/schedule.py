@@ -19,14 +19,13 @@ class Schedule:
       self.CheckList = DataBase.InitElements()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
-      self.ArduinoData = ""
     except Exception, e:
       print e
       raise
   
   def Check(self):
     for Element in self.CheckList:
-      self.ArduinoData += Element.Check()
+      Element.Check()
   
   def UpdateSensor(self, ArduinoData):
     if ArduinoData == "":
@@ -37,18 +36,12 @@ class Schedule:
         if Element.IsSensor() == False:
           continue
         if ParseList[0] == Element.GetSensorName(): 
-          self.ArduinoData += Element.Update(float(ParseList[1]))
+          Element.Update(float(ParseList[1]))
         elif ParseList[0] == "button":
           if Element.GetSensorName() == "shortbutton":  
-            self.ArduinoData += Element.Update(float(ParseList[1]))
+            Element.Update(float(ParseList[1]))
           elif Element.GetSensorName() == "longbutton":  
-            self.ArduinoData += Element.Update(float(ParseList[2]))
-
-  def GetArduinoData(self):
-    return self.ArduinoData
-
-  def ResetArduinoData(self):
-    self.ArduinoData = ""
+            Element.Update(float(ParseList[2]))
 
   def Schedule(self):
     self.LocalTime = datetime.datetime.now()

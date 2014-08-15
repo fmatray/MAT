@@ -11,8 +11,7 @@ class BaseCheck:
   def Action(self):
     ActionCommand = ""
     for Action in self.ActionList:
-      ActionCommand += Action.Action()
-    return ActionCommand
+      Action.Action()
 
   def IsSensor(self):
     return False

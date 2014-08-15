@@ -10,16 +10,14 @@ from database import *
 # MAIN LOOP
 try :
   DataBase = DataBase()
-  DataBase.InitConfig()
+  Config = DataBase.InitConfig()
+  print Config
+  Config.Show()
   Sch = Schedule(DataBase)
   Com = Communication()
 
   while True:
    Sch.Schedule()
-   s = Sch.GetArduinoData()
-   if s <> "":
-     Com.AppendUnixData(s)
-     Sch.ResetArduinoData()
    (ArduinoData, UnixData) = Com.CheckCommunication()
    Sch.UpdateSensor(ArduinoData)
 

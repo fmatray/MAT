@@ -87,6 +87,8 @@ class Communication:
   
   def CheckCommunication(self):
     try:
+      if self.Arduino.IsWriteable():
+        self.WriteList.append(self.Arduino.Socket())
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
       self.ProcessReadable()
       ArduinoData = self.ArduinoData

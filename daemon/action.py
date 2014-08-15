@@ -1,7 +1,8 @@
 #!/usr/bin/python
 import httplib
 import urllib
-import config
+from config import *
+from arduino import *
 
 class Action:
  def __init__(self):
@@ -11,17 +12,25 @@ class Action:
   raise NotImplementedError
 
 class ArduinoAction(Action):
+  Arduino = None
   def __init__(self, Command, Argument= ""):
+    if self.Arduino == None:
+      self.Arduino = Arduino()
     self.Command = Command
     self.Argument = Argument
 
   def Action(self):
-    return str(self.Command) + ":" + str(self.Argument) + '\n'
+    self.Arduino.AddOutputData(str(self.Command) + ":" + str(self.Argument) + '\n')
 
 class PushOverAction(Action):
   def __init__(self, Title = "NO TITLE", Message = "NO MESSAGE", Priority = -2):
-    self.Token = config.Config.GetKey("PushOver", "Token")
-    self.User = config.Config.GetKey("PushOver", "User")
+    Config = Configuration()
+    print "______"
+    Config.Show()
+    print Config
+    print "______"
+    self.Token = Config.GetKey("PushOver", "Token")
+    self.User = Config.GetKey("PushOver", "User")
     if (self.Token == None or self.User == None):
       raise KeyError
     self.Title = Title
@@ -40,4 +49,3 @@ class PushOverAction(Action):
       "priority": self.Priority
       }), { "Content-type": "application/x-www-form-urlencoded" })
     Answer = conn.getresponse()
-    return ""

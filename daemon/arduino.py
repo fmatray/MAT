@@ -1,7 +1,15 @@
 #!/usr/bin/python
 import serial
 from time import *
-class Arduino:
+class Arduino(object):
+  _Instance = None
+  OutputData = ""
+
+  def __new__(cls):
+    if Arduino._Instance == None:
+      Arduino._Instance = object.__new__(cls)
+    return Arduino._Instance
+
   def __init__(self):
     try:
       self.Console = serial.Serial('/dev/ttyACM0', 9600) 
@@ -9,9 +17,17 @@ class Arduino:
     except Exception, e:
       print(e)
       raise
+  def AddOutputData(self, Data):
+    self.OutputData += Data
+
+  def IsWriteable(self):
+    if self.OutputData != "":
+      return True
+    return False
+
   def Send(self, Data):
-    if Data == "":
-       return ""
+    Data = Data + self.OutputData
+    self.OutputData = ""
     for D in Data.split('\n'):
       if D != "" and D[0] != '\r':
         print "Sending : " + D

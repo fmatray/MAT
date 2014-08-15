@@ -1,8 +1,14 @@
 #!/usr/bin/python
 
-class Configuration:
+class Configuration(object):
+  _Instance = None
+  Config = dict()
+  def __new__(cls):
+    if Configuration._Instance == None:
+      Configuration._Instance = object.__new__(cls)
+    return Configuration._Instance
+
   def __init__(self):
-    self.Config = dict()
     global Config
     Config = self
     return
@@ -22,4 +28,3 @@ class Configuration:
       for KeyKey in self.Config[CategoryKey]:
         print CategoryKey + ":" + KeyKey + ":"  + self.Config[CategoryKey][KeyKey]
 
-Config = Configuration()

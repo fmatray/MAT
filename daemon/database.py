@@ -3,7 +3,7 @@ import MySQLdb
 import sys
 import copy
 import re
-import config
+from config import *
 from email import *
 from alarm import *
 from sensor import *
@@ -83,5 +83,7 @@ class DataBase:
 
   def InitConfig(self):
     self.Cursor.execute("SELECT * FROM `Config`")
+    Config = Configuration()
     for Row in self.Cursor.fetchall():
-      config.Config.AddKey(Row[1], Row[2], Row[3])
+      Config.AddKey(Row[1], Row[2], Row[3])
+    return Config

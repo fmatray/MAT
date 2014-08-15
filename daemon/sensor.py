@@ -3,7 +3,10 @@ import datetime
 from basecheck import *
 
 class Sensor(BaseCheck):
+  Arduino = None
   def __init__(self, Name, Threshold, MinMax):
+    if self.Arduino == None:
+      self.Arduino = Arduino()
     BaseCheck.__init__(self)
     self.Name = Name
     self.Threshold = Threshold
@@ -29,24 +32,22 @@ class Sensor(BaseCheck):
     return ""
 
   def Check(self):
-    Ret = ""
     if self.Interval >= 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds >= self.Interval and self.UpdateCommand != "":
-      Ret = self.UpdateCommand + "\n"
+      Arduino.AddOutputData(self.UpdateCommand + "\n")
     if self.ActionSent == True:
-      return Ret    
+      return 
 
     if self.Analogic == False:
       if self.Value == self.Threshold:
         self.ActionSent = True
-        Ret += self.Action()
+        Arduino.AddOutputData(self.Action())
     else:
       if self.MinMax == False and self.Value <= self.Threshold:
         self.ActionSent = True
-        Ret += self.Action()
+        Arduino.AddOutputData(self.Action())
       if self.MinMax == True and self.Value >= self.Threshold:
         self.ActionSent = True
-        Ret += self.Action()
-    return Ret
+        Arduino.AddOutputData(self.Action())
 
   def GetSensorName(self):
     return self.Name
