@@ -16,10 +16,7 @@ class Schedule:
       self.CheckList = []
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
-      #self.CheckList = DataBase.InitElements()
-      R = Rain(True, 1)
-      R.AddAction(ArduinoAction("alarm"))
-      self.CheckList.append(R)
+      self.CheckList = DataBase.InitElements()
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
       self.ArduinoData = ""
