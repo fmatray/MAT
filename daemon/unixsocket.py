@@ -79,6 +79,11 @@ class UnixSocket(object):
       return self.ClientSocket.Writeable()
     return []
 
+  def Errored(self):
+    if self.ClientSocket != None:
+      return [self, self.ClientSocket]
+    return [self]
+
   def Send(self, Data= ""):
     return
 
@@ -91,7 +96,9 @@ class UnixSocket(object):
 
   def ResetClientSocket(self):
     try:
+      print "ResetClientSocket"
       del self.ClientSocket
+      self.ClientSocket = None
     except:
       pass
     self.ClientSocket = None

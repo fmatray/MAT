@@ -16,7 +16,6 @@ class Communication:
 
   def ProcessReadable(self):
     ClientSocket = ClientUnixSocket()
-    print self.Readable
     for Socket in self.Readable:
       Data = Socket.Readline()
       if Socket is self.Arduino:
@@ -39,10 +38,10 @@ class Communication:
     try:
       self.ReadList = self.Arduino.Readable() + self.UnixSocket.Readable()
       self.WriteList = self.Arduino.Writeable() + self.UnixSocket.Writeable()
+      self.Errored = self.Arduino.Errored() + self.UnixSocket.Errored()
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
       self.ProcessReadable()
       self.ProcessWritable()
       self.ProcessErrored()
     except Exception, e:
-      print e
-      raise
+      pass

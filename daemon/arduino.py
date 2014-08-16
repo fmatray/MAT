@@ -35,6 +35,9 @@ class Arduino(object):
       return [self]
     return list()
 
+  def Errored(self):
+    return [self]
+
   def Send(self, Data = ""):
     Data = Data + self.OutputData
     self.OutputData = ""
