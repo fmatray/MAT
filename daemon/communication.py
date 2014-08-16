@@ -16,11 +16,12 @@ class Communication:
 
   def ProcessReadable(self):
     ClientSocket = ClientUnixSocket()
+    print self.Readable
     for Socket in self.Readable:
       Data = Socket.Readline()
       if Socket is self.Arduino:
         ClientSocket.AddOutputData(Data)
-      elif Socket is ClientSocket:
+      elif ClientSocket != None and Socket is ClientSocket:
         self.Arduino.AddOutputData(Data)
         
   def ProcessWritable(self):
@@ -28,21 +29,17 @@ class Communication:
       Socket.Send()
 
   def ProcessErrored(self):
+    ClientSocket = ClientUnixSocket()
     for Socket in self.Errored:
+      if Socket is ClientSocket:
+        self.UnixSocket.ResetClientSocket() 
       print "Error"
 
   def CheckCommunication(self):
     try:
       self.ReadList = self.Arduino.Readable() + self.UnixSocket.Readable()
       self.WriteList = self.Arduino.Writeable() + self.UnixSocket.Writeable()
-      print "----------------------------------------------"
-      print self.ReadList
-      print self.ReadList
-      print "Select"
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
-      print self.Readable
-      print self.Writable
-      print self.Errored
       self.ProcessReadable()
       self.ProcessWritable()
       self.ProcessErrored()
