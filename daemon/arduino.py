@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import serial
 from time import *
+from sensor import *
+
 class Arduino(object):
   _Instance = None
   OutputData = ""
@@ -42,4 +44,39 @@ class Arduino(object):
 
   def Socket(self):
     return self.Console
-    
+
+class ArduinoAction(Action):
+  Arduino = None
+  def __init__(self, Command, Argument= "", Arg3 = "", Arg4 = "", Arg5 = ""):
+    if self.Arduino == None:
+      self.Arduino = Arduino()
+    self.Command = Command
+    self.Argument = Argument
+
+  def Action(self):
+    self.Arduino.AddOutputData(str(self.Command) + ":" + str(self.Argument) + '\n')
+
+class TemperatureSensor(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "temperature", Threshold, MinMax)
+    self.UpdateCommand = "temperaturesensor"
+
+class LightSensor(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "light", Threshold, MinMax)
+    self.UpdateCommand = "lightsensor"
+
+class SoundSensor(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "sound", Threshold, MinMax)
+    self.UpdateCommand = "soundsensor"
+
+class LongButtonSensor(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "longbutton", Threshold, MinMax)
+    self.Interval = 0
+
+class ShortButtonSensor(Sensor):
+  def __init__(self, Threshold, MinMax):
+    Sensor.__init__(self, "shortbutton", Threshold, MinMax)
+    self.Interval = 0
