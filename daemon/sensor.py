@@ -52,27 +52,27 @@ class Sensor(BaseCheck):
   def GetSensorName(self):
     return self.Name
 
-class Temperature(Sensor):
+class TemperatureSensor(Sensor):
   def __init__(self, Threshold, MinMax):
     Sensor.__init__(self, "temperature", Threshold, MinMax)
     self.UpdateCommand = "temperaturesensor"
 
-class Light(Sensor):
+class LightSensor(Sensor):
   def __init__(self, Threshold, MinMax):
     Sensor.__init__(self, "light", Threshold, MinMax)
     self.UpdateCommand = "lightsensor"
 
-class Sound(Sensor):
+class SoundSensor(Sensor):
   def __init__(self, Threshold, MinMax):
     Sensor.__init__(self, "sound", Threshold, MinMax)
     self.UpdateCommand = "soundsensor"
 
-class LongButton(Sensor):
+class LongButtonSensor(Sensor):
   def __init__(self, Threshold, MinMax):
     Sensor.__init__(self, "longbutton", Threshold, MinMax)
     self.Interval = 0
 
-class ShortButton(Sensor):
+class ShortButtonSensor(Sensor):
   def __init__(self, Threshold, MinMax):
     Sensor.__init__(self, "shortbutton", Threshold, MinMax)
     self.Interval = 0
