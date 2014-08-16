@@ -16,8 +16,8 @@ try :
 
   while True:
    Sch.Schedule()
-   (ArduinoData, UnixData) = Com.CheckCommunication()
-   Sch.UpdateSensor(ArduinoData)
+   Com.CheckCommunication()
+   Sch.UpdateSensor()
 
 except Exception, e:
   exc_type, exc_value, exc_traceback = sys.exc_info()

@@ -9,6 +9,7 @@ from alarm import *
 from sensor import *
 from weather import *
 from action import *
+from arduino import *
 
 class Schedule:
   def __init__(self, DataBase):
@@ -27,7 +28,8 @@ class Schedule:
     for Element in self.CheckList:
       Element.Check()
   
-  def UpdateSensor(self, ArduinoData):
+  def UpdateSensor(self):
+    ArduinoData = Arduino().GetInputData()
     if ArduinoData == "":
       return
     for Line in self.ParseLine.split(ArduinoData):

@@ -6,6 +6,7 @@ from sensor import *
 class Arduino(object):
   _Instance = None
   OutputData = ""
+  InputData = ""
 
   def __new__(cls):
     if Arduino._Instance == None:
@@ -19,15 +20,22 @@ class Arduino(object):
     except Exception, e:
       print(e)
       raise
+
   def AddOutputData(self, Data):
     self.OutputData += Data
 
-  def IsWriteable(self):
-    if self.OutputData != "":
-      return True
-    return False
+  def GetInputData(self):
+    return self.InputData
 
-  def Send(self, Data):
+  def Readable(self):
+    return [self]
+
+  def Writeable(self):
+    if self.OutputData != "":
+      return [self]
+    return list()
+
+  def Send(self, Data = ""):
     Data = Data + self.OutputData
     self.OutputData = ""
     for D in Data.split('\n'):
@@ -40,10 +48,14 @@ class Arduino(object):
     while (self.Console.inWaiting() > 0):
       Data += self.Console.readline(1024)
       print "Received :" + Data
+    self.InputData = Data
     return Data
 
   def Socket(self):
     return self.Console
+
+  def fileno(self):
+    return self.Console.fileno()
 
 class ArduinoAction(Action):
   Arduino = None
