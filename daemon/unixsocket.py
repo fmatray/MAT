@@ -10,8 +10,6 @@ class ClientUnixSocket(object):
   InputData = ""
 
   def __new__(cls, Socket = None):
-    if Socket == None and ClientUnixSocket.ClientSocket == None:
-      return None
     if ClientUnixSocket._Instance == None:
       ClientUnixSocket._Instance = object.__new__(cls)
     return ClientUnixSocket._Instance
@@ -42,6 +40,8 @@ class ClientUnixSocket(object):
       self.InputData = self.ClientSocket.recv(1024)
       if not self.InputData:
         self.ClientSocket.close()
+        UnixSocket().ResetClientSocket()
+        return ""
       if self.InputData == "kill\n":
         print "I DIED"
         sys.exit()

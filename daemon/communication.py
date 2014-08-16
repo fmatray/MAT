@@ -15,12 +15,14 @@ class Communication:
     self.ErrorList = []
 
   def ProcessReadable(self):
-    ClientSocket = ClientUnixSocket()
     for Socket in self.Readable:
       Data = Socket.Readline()
+      ClientSocket = ClientUnixSocket()
+      if ClientSocket == None:
+        return
       if Socket is self.Arduino:
         ClientSocket.AddOutputData(Data)
-      elif ClientSocket != None and Socket is ClientSocket:
+      elif Socket is ClientSocket:
         self.Arduino.AddOutputData(Data)
         
   def ProcessWritable(self):
@@ -40,8 +42,11 @@ class Communication:
       self.WriteList = self.Arduino.Writeable() + self.UnixSocket.Writeable()
       self.Errored = self.Arduino.Errored() + self.UnixSocket.Errored()
       self.Readable, self.Writable, self.Errored = select.select(self.ReadList, self.WriteList, self.ErrorList, 10)
-      self.ProcessReadable()
-      self.ProcessWritable()
-      self.ProcessErrored()
+      if len(self.Errored) > 0: 
+        self.ProcessErrored()
+      else:
+        self.ProcessReadable()
+        self.ProcessWritable()
     except Exception, e:
-      pass
+      print e
+      raise
