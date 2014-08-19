@@ -2,6 +2,7 @@
 import socket
 import sys
 import os
+import logging
 
 class ClientUnixSocket(object):
   _Instance = None
@@ -17,7 +18,7 @@ class ClientUnixSocket(object):
   def __init__(self, Socket = None): 
     if Socket != None:
       self.ClientSocket, ClientAddress = Socket.accept()
-      print "New Client"
+      logging.info("New Client")
 
   def __del__(self):
     self.ClientUnixSocket.close()
@@ -43,9 +44,9 @@ class ClientUnixSocket(object):
         UnixSocket().ResetClientSocket()
         return ""
       if self.InputData == "kill\n":
-        print "I DIED"
+        logging.info("This is the end")
         sys.exit()
-      print self.InputData 
+      logging.debug(self.InputData)
     return self.InputData
 
   def Writeable(self):
@@ -96,7 +97,6 @@ class UnixSocket(object):
 
   def ResetClientSocket(self):
     try:
-      print "ResetClientSocket"
       del self.ClientSocket
       self.ClientSocket = None
     except:
@@ -114,7 +114,7 @@ class UnixSocket(object):
    # Create a UDS socket
    self.UnixSocket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
    # Bind the socket to the port
-   print >>sys.stderr, 'starting up on %s' % ServerAddress
+   logging.info('starting up on %s' % ServerAddress)
    self.UnixSocket.bind(ServerAddress)
    # Listen for incoming connections
    self.UnixSocket.listen(1)

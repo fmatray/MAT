@@ -3,6 +3,7 @@ import MySQLdb
 import sys
 import copy
 import re
+import logging
 from config import *
 from email import *
 from alarm import *
@@ -26,8 +27,8 @@ class DataBase:
       self.DataBase.autocommit(True)
       self.Cursor = self.DataBase.cursor()
     except Exception, e:
-      print e
       raise
+
   def Close(self):
     self.DataBase.close()
 
@@ -44,26 +45,21 @@ class DataBase:
       LastID = 0
       Element = None
       for Row in self.Cursor.fetchall():
-        print Row
         if LastID != Row[9]:
           LastID = Row[9]
           if Element != None:
             CheckList.append(Element)
           Element = eval(self.Function[Key])(Row)
-          print Element
         if Element != None:  
           Act = self.GetAction(Row)
           if (Act != None):
             Element.AddAction(Act)
       if Element != None:
         CheckList.append(Element)
-    print "----------"
-    print CheckList
-    print "----------"
+    logging.info(CheckList)
     for i in CheckList:
-      print i 
-      print i.ActionList
-      print "+++++++++++"
+      logging.info(i)
+      logging.info(i.ActionList)
     return CheckList
 
   def GetEmail(self, Row):

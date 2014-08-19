@@ -11,8 +11,6 @@ class Alarm(BaseCheck):
 
   def Check(self):
 # ALARM on date and time 
-    print "ALARM ----"
-    print self.ActionList
     LocalTime = datetime.datetime.now()
     Date = list()
     i = 0

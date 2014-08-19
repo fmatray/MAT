@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import serial
+import logging
 from time import *
 from sensor import *
 
@@ -18,7 +19,6 @@ class Arduino(object):
       self.Console = serial.Serial('/dev/ttyACM0', 9600) 
       self.Console.nonblocking()
     except Exception, e:
-      print(e)
       raise
 
   def AddOutputData(self, Data):
@@ -43,14 +43,14 @@ class Arduino(object):
     self.OutputData = ""
     for D in Data.split('\n'):
       if D != "" and D[0] != '\r':
-        print "Sending : " + D
+        logging.debug("Sending : " + D)
         self.Console.write(D + '\n')
         
   def Readline(self):
     Data = ""
     while (self.Console.inWaiting() > 0):
       Data += self.Console.readline(1024)
-      print "Received :" + Data
+      logging.debug("Received :" + Data)
     self.InputData = Data
     return Data
 

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import imaplib
 import poplib
+import logging
 from basecheck import *
 
 class ImapEmail(BaseCheck):
@@ -30,8 +31,7 @@ class ImapEmail(BaseCheck):
       if RetCode == "OK":
         self.Mail.select()
     except Exception, e:
-      print "CANNOT OPEN " + self.Server
-      raise
+      logging.error("CANNOT OPEN " + self.Server)
   
   def Check(self):
     try:
@@ -76,8 +76,7 @@ class PopEmail(BaseCheck):
       self.Mail.pass_(self.Password)
       (MessagesCount, MailboxSize) =  self.Mail.stat()
     except Exception, e:
-      print "CANNOT OPEN " + self.Server
-      raise
+      logging.error("CANNOT OPEN " + self.Server)
 
   def Check(self):
     Ret = ""

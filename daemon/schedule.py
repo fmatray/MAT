@@ -21,7 +21,6 @@ class Schedule:
       self.ParseLine = re.compile("\r\n")
       self.ParseElement = re.compile(":")
     except Exception, e:
-      print e
       raise
   
   def Check(self):

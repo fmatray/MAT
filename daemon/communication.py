@@ -34,7 +34,7 @@ class Communication:
     for Socket in self.Errored:
       if Socket is ClientSocket:
         self.UnixSocket.ResetClientSocket() 
-      print "Error"
+      logging.error("Error with " + str(Socket))
 
   def CheckCommunication(self):
     try:
@@ -48,5 +48,4 @@ class Communication:
         self.ProcessReadable()
         self.ProcessWritable()
     except Exception, e:
-      print e
       raise

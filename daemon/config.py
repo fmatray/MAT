@@ -26,5 +26,5 @@ class Configuration(object):
   def Show(self):
     for CategoryKey in self.Config:
       for KeyKey in self.Config[CategoryKey]:
-        print CategoryKey + ":" + KeyKey + ":"  + self.Config[CategoryKey][KeyKey]
+        logging.info("Config : " + CategoryKey + ":" + KeyKey + ":"  + self.Config[CategoryKey][KeyKey])
 
