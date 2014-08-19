@@ -1,0 +1,19 @@
+body {
+	color: purple;
+	background-color: #F0F0F0;
+	font-family: monospace;
+}
+
+.navbar dt {
+	font-weight: bold;
+	padding: 5px;
+	display: inline;
+}
+.main {
+	padding: 5px;
+	margin-top: 5px;
+
+} 
+.main table tr th
+{
+}
