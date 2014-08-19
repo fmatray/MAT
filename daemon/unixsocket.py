@@ -21,6 +21,7 @@ class ClientUnixSocket(object):
       logging.info("New Client")
 
   def __del__(self):
+    logginf.info("Closing client")
     self.ClientUnixSocket.close()
 
   def AddOutputData(self, Data):

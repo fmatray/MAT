@@ -12,7 +12,7 @@ from database import *
 try :
   # Log to file
   logging.basicConfig(
-    filename='daemon.log',
+#    filename='daemon.log',
     level=logging.INFO,
     format='%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s')   
 
@@ -25,6 +25,7 @@ try :
 # Log to syslog
   from logging.handlers import SysLogHandler
   Syslog = SysLogHandler(address='/dev/log')
+  Syslog.setLevel(logging.INFO)
   Syslog.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
   logging.getLogger().addHandler(Syslog)
 
