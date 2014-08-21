@@ -1,11 +1,14 @@
 #!/usr/bin/python
 import serial
 import logging
+import socket
+import os.path
 from time import *
 from sensor import *
 
 class Arduino(object):
   _Instance = None
+  Serial = True
   OutputData = ""
   InputData = ""
 
@@ -16,8 +19,13 @@ class Arduino(object):
 
   def __init__(self):
     try:
-      self.Console = serial.Serial('/dev/ttyACM0', 9600) 
-      self.Console.nonblocking()
+      if os.path.isfile('/dev/ttyACM0'):
+        self.Console = serial.Serial('/dev/ttyACM0', 9600) 
+        self.Console.nonblocking()
+      else:
+        self.Console = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.Console.connect(('127.0.0.1', 6571))
+        self.Serial = False
     except Exception, e:
       raise
 
@@ -44,12 +52,17 @@ class Arduino(object):
     for D in Data.split('\n'):
       if D != "" and D[0] != '\r':
         logging.debug("Sending : " + D)
-        self.Console.write(D + '\n')
-        
+        if self.Serial == True:
+          self.Console.write(D + '\n')
+        else:
+          self.Console.send(D + '\n')   
   def Readline(self):
     Data = ""
     while (self.Console.inWaiting() > 0):
-      Data += self.Console.readline(1024)
+      if self.Serial == True:
+        Data += self.Console.readline(1024)
+      else:
+        Data += self.Console.recv(1024)
       logging.debug("Received :" + Data)
     self.InputData = Data
     return Data
