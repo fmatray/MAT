@@ -58,12 +58,12 @@ class Arduino(object):
           self.Console.send(D + '\n')   
   def Readline(self):
     Data = ""
-    while (self.Console.inWaiting() > 0):
-      if self.Serial == True:
+    if self.Serial == True:
+      while (self.Console.inWaiting() > 0):
         Data += self.Console.readline(1024)
-      else:
-        Data += self.Console.recv(1024)
-      logging.debug("Received :" + Data)
+    else:
+      Data += self.Console.recv(1024)
+    logging.debug("Received :" + Data)
     self.InputData = Data
     return Data
 
