@@ -113,10 +113,15 @@ class UnixSocket(object):
      if os.path.exists(ServerAddress):
        raise
    # Create a UDS socket
-   self.UnixSocket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+   self.UnixSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    # Bind the socket to the port
    logging.info('starting up on %s' % ServerAddress)
-   self.UnixSocket.bind(ServerAddress)
+#   self.UnixSocket.bind(ServerAddress)
+   try:
+    self.UnixSocket.bind(("127.0.0.1", "8888"))
+   except socket.error as msg:
+    loggin.critical('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+    sys.exit()
    # Listen for incoming connections
    self.UnixSocket.listen(1)
 
