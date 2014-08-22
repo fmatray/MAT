@@ -14,7 +14,7 @@ from arduino import *
 class Schedule:
   def __init__(self, DataBase):
     try:
-      self.CheckList = []
+      self.CheckList = list()
       self.LocalTime = datetime.datetime.now()
       self.LastCheck = self.LocalTime
       self.CheckList = DataBase.InitElements()
