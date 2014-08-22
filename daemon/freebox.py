@@ -11,7 +11,11 @@ class FreeboxAction(Action):
     
   def Push(self, Key):
     try:
-      urllib2.urlopen("http://hd1.freebox.fr/pub/remote_control?key=" + Key + "&code=" + self.RemoteCode)
+      URL = "http://hd1.freebox.fr/pub/remote_control?key=" + Key + "&code=" + self.RemoteCode
+      Answer = urllib2.urlopen(URL)
+      if Answer.getcode() != 200:
+        logging.warning("Error with the freebox player : " + Answer.getcode())
+        logging.warning("URL : " + URL)
     except URLError, e:
       logging.warning("Cannot connect to the freebox player")
       pass
