@@ -9,7 +9,7 @@ class Action:
 from arduino import *
 from pushover import *
 from samsungtv import *
-from freeboy import *
+from freebox import *
 
 
 
