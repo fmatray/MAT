@@ -20,10 +20,7 @@ class DataBase:
               "Sensors": "self.GetSensor"}
   def __init__(self):
     try:
-      self.DataBase = MySQLdb.connect(host="localhost", # your host, usually localhost
-        user="arduino", # your username
-        passwd="toto", # your password
-        db="arduino") # name of the data base
+      self.DataBase = MySQLdb.connect(read_default_file="my.cnf") # name of the conf file
       self.DataBase.autocommit(True)
       self.Cursor = self.DataBase.cursor()
     except Exception, e:
