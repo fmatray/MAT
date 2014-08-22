@@ -118,7 +118,7 @@ class UnixSocket(object):
    logging.info('starting up on %s' % ServerAddress)
 #   self.UnixSocket.bind(ServerAddress)
    try:
-    self.UnixSocket.bind(("127.0.0.1", "8888"))
+    self.UnixSocket.bind(("127.0.0.1", 8888))
    except socket.error as msg:
     loggin.critical('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
     sys.exit()

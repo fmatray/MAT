@@ -19,13 +19,16 @@ class Arduino(object):
 
   def __init__(self):
     try:
-      if os.path.isfile('/dev/ttyACM0'):
+      if os.path.exists('/dev/ttyACM0'):
+      	print "Connection on ttyACM0"
         self.Console = serial.Serial('/dev/ttyACM0', 9600) 
         self.Console.nonblocking()
-      elif os.path.isfile('/dev/ttyATH0'):
+      elif os.path.exists('/dev/ttyATH0'):
+      	print "Connection on ttyATH0"
         self.Console = serial.Serial('/dev/ttyATH0', 9600) 
         self.Console.nonblocking()
       else:
+      	print "Connecting on 127.0.0.1:6571"
         self.Serial = False
         self.Console = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Console.connect(('127.0.0.1', 6571))
