@@ -7,7 +7,6 @@ class FreeboxAction(Action):
   def __init__(self, Keys, Arg2 = "", Arg3 = "", Arg4 = "", Arg5 = ""):
     Config = Configuration()
     self.Keys = Keys
-    self.DstIP = str(Config.GetKey("Freebox", "IP"))
     self.RemoteCode = str(Config.GetKey("Freebox", "Code"))
     
   def Push(self, Key):
