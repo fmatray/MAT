@@ -22,10 +22,13 @@ class Arduino(object):
       if os.path.isfile('/dev/ttyACM0'):
         self.Console = serial.Serial('/dev/ttyACM0', 9600) 
         self.Console.nonblocking()
+      elif os.path.isfile('/dev/ttyATH0'):
+        self.Console = serial.Serial('/dev/ttyATH0', 9600) 
+        self.Console.nonblocking()
       else:
+        self.Serial = False
         self.Console = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Console.connect(('127.0.0.1', 6571))
-        self.Serial = False
     except Exception, e:
       raise
 
@@ -60,9 +63,9 @@ class Arduino(object):
     Data = ""
     if self.Serial == True:
       while (self.Console.inWaiting() > 0):
-        Data += self.Console.readline(1024)
+        Data += self.Console.readline(64)
     else:
-      Data += self.Console.recv(1024)
+      Data += self.Console.recv(64)
     logging.debug("Received :" + Data)
     self.InputData = Data
     return Data
