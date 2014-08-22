@@ -13,8 +13,11 @@ class FreeboxAction(Action):
     try:
       urllib2.urlopen("http://hd1.freebox.fr/pub/remote_control?key=" + Key + "&code=" + self.RemoteCode)
     except URLError, e:
-      logging.info("Cannot connect to the freebox player")
+      logging.warning("Cannot connect to the freebox player")
       pass
   def Action(self):
+    if self.RemoteCode == None:
+      logging.warning("No remote code specified")
+      return
     for Key in self.Keys.split(','):
       self.Push(Key)
