@@ -10,8 +10,11 @@ class FreeboxAction(Action):
     self.RemoteCode = str(Config.GetKey("Freebox", "Code"))
     
   def Push(self, Key):
-    urllib2.urlopen("http://hd1.freebox.fr/pub/remote_control?key=" + Key + "&code=" + self.RemoteCode)
-    
+    try:
+      urllib2.urlopen("http://hd1.freebox.fr/pub/remote_control?key=" + Key + "&code=" + self.RemoteCode)
+    except URLError, e:
+      logging.info("Cannot connect to the freebox player")
+      pass
   def Action(self):
     for Key in self.Keys.split(','):
       self.Push(Key)
