@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from sensor import *
 import pyowm
-import config
+from config import *
 import datetime
 
 class Weather(object):
