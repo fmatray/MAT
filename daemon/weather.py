@@ -42,7 +42,7 @@ class Weather(object):
     return self.Clouds
 
 class RainSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "rain", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -57,7 +57,7 @@ class RainSensor(Sensor):
     return Sensor.Check(self)
 
 class FogSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "fog", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -72,7 +72,7 @@ class FogSensor(Sensor):
     return Sensor.Check(self)
 
 class SnowSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "snow", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -87,7 +87,7 @@ class SnowSensor(Sensor):
     return Sensor.Check(self)
 
 class CloudsSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "clouds", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
