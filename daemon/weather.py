@@ -1,11 +1,12 @@
 #!/usr/bin/python
 from sensor import *
 import pyowm
-import config
+from config import *
 import datetime
 
 class Weather(object):
   _Instance = None
+ Configured = False
  
   def __new__(cls):
     if Weather._Instance == None:
@@ -13,8 +14,11 @@ class Weather(object):
     return Weather._Instance
 
   def __init__(self):
-    self.City = config.Config.GetKey("Weather", "City") 
-    self.Token = config.Config.GetKey("Weather", "Token") 
+    if self.Configured == True:
+      return
+    Config = Configuration()
+    self.City = Config.GetKey("Weather", "City") 
+    self.Token = Config.GetKey("Weather", "Token") 
     self.Owm = pyowm.OWM(self.Token)
     self.Rain = False 
     self.Fog = False 
@@ -22,6 +26,7 @@ class Weather(object):
     self.Clouds = False
     self.LastUpdateTime = None 
     self.Update()
+    self.Configured = True
 
   def Update(self):
     if self.LastUpdateTime == None or (datetime.datetime.now() - self.LastUpdateTime).seconds > 3600:
@@ -42,7 +47,7 @@ class Weather(object):
     return self.Clouds
 
 class RainSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "rain", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -57,7 +62,7 @@ class RainSensor(Sensor):
     return Sensor.Check(self)
 
 class FogSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "fog", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -72,7 +77,7 @@ class FogSensor(Sensor):
     return Sensor.Check(self)
 
 class SnowSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "snow", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False
@@ -87,7 +92,7 @@ class SnowSensor(Sensor):
     return Sensor.Check(self)
 
 class CloudsSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "clouds", Threshold, MinMax)
     self.Weather = Weather() 
     self.Analogic = False

@@ -9,7 +9,6 @@ class BaseCheck:
     self.ActionList.append(Act)
 
   def Action(self):
-    ActionCommand = ""
     for Action in self.ActionList:
       Action.Action()
 

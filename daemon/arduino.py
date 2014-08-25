@@ -90,27 +90,54 @@ class ArduinoAction(Action):
   def Action(self):
     self.Arduino.AddOutputData(str(self.Command) + ":" + str(self.Argument) + '\n')
 
-class TemperatureSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
-    Sensor.__init__(self, "temperature", Threshold, MinMax)
+
+class ArduinoSensor(Sensor):
+  Arduino = None
+  def __init__(self, Name, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    Sensor.__init__(self, Name, Threshold, MinMax, Argument3, Argument4)
+    if ArduinoSensor.Arduino == None:
+      ArduinoSensor.Arduino = Arduino()
+    self.UpdateCommand = ""
+ 
+   def Check(self):
+    if self.Interval >= 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds >= self.Interval and self.UpdateCommand != "":
+      ArduinoSensor.AddOutputData(self.UpdateCommand + "\n")
+    if self.ActionSent == True:
+      return 
+
+    if self.Analogic == False:
+      if self.Value == self.Threshold:
+        self.ActionSent = True
+        ArduinoSensor.AddOutputData(self.Action())
+    else:
+      if self.MinMax == False and self.Value <= self.Threshold:
+        self.ActionSent = True
+        ArduinoSensor.AddOutputData(self.Action())
+      if self.MinMax == True and self.Value >= self.Threshold:
+        self.ActionSent = True
+        ArduinoSensor.AddOutputData(self.Action())
+    
+class TemperatureSensor(ArduinoSensor):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    ArduinoSensor.__init__(self, "temperature", Threshold, MinMax)
     self.UpdateCommand = "temperaturesensor"
 
-class LightSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
-    Sensor.__init__(self, "light", Threshold, MinMax)
+class LightSensor(ArduinoSensor):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    ArduinoSensor.__init__(self, "light", Threshold, MinMax)
     self.UpdateCommand = "lightsensor"
 
-class SoundSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
-    Sensor.__init__(self, "sound", Threshold, MinMax)
+class SoundSensor(ArduinoSensor):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    ArduinoSensor.__init__(self, "sound", Threshold, MinMax)
     self.UpdateCommand = "soundsensor"
 
-class LongButtonSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
-    Sensor.__init__(self, "longbutton", Threshold, MinMax)
+class LongButtonSensor(ArduinoSensor):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    ArduinoSensor.__init__(self, "longbutton", Threshold, MinMax)
     self.Interval = 0
 
-class ShortButtonSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
-    Sensor.__init__(self, "shortbutton", Threshold, MinMax)
+class ShortButtonSensor(ArduinoSensor):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
+    ArduinoSensor.__init__(self, "shortbutton", Threshold, MinMax)
     self.Interval = 0

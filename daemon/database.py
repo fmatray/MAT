@@ -76,7 +76,7 @@ class DataBase:
 
   def GetSensor(self, Row):
     try:
-      return eval(str(Row[10]) + "Sensor")(Row[11], Row[12])
+      return eval(str(Row[10]) + "Sensor")(Row[11], Row[12], Row[13], Row[14])
     except:
       return None
 
