@@ -15,7 +15,7 @@ class Weather(object):
 
   def __init__(self):
     if self.Configured == True:
-      retun
+      return
     self.City = config.Config.GetKey("Weather", "City") 
     self.Token = config.Config.GetKey("Weather", "Token") 
     self.Owm = pyowm.OWM(self.Token)
