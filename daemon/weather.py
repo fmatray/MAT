@@ -6,6 +6,7 @@ import datetime
 
 class Weather(object):
   _Instance = None
+ Configured = False
  
   def __new__(cls):
     if Weather._Instance == None:
@@ -13,6 +14,8 @@ class Weather(object):
     return Weather._Instance
 
   def __init__(self):
+    if self.Configured == True:
+      retun
     self.City = config.Config.GetKey("Weather", "City") 
     self.Token = config.Config.GetKey("Weather", "Token") 
     self.Owm = pyowm.OWM(self.Token)
@@ -22,6 +25,7 @@ class Weather(object):
     self.Clouds = False
     self.LastUpdateTime = None 
     self.Update()
+    self.Configured = True
 
   def Update(self):
     if self.LastUpdateTime == None or (datetime.datetime.now() - self.LastUpdateTime).seconds > 3600:
