@@ -4,7 +4,7 @@ from basecheck import *
 
 class Sensor(BaseCheck):
   Arduino = None
-  def __init__(self, Name, Threshold, MinMax):
+  def __init__(self, Name, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     if self.Arduino == None:
       self.Arduino = Arduino()
     BaseCheck.__init__(self)
