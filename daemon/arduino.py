@@ -88,26 +88,26 @@ class ArduinoAction(Action):
     self.Arduino.AddOutputData(str(self.Command) + ":" + str(self.Argument) + '\n')
 
 class TemperatureSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "temperature", Threshold, MinMax)
     self.UpdateCommand = "temperaturesensor"
 
 class LightSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "light", Threshold, MinMax)
     self.UpdateCommand = "lightsensor"
 
 class SoundSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "sound", Threshold, MinMax)
     self.UpdateCommand = "soundsensor"
 
 class LongButtonSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "longbutton", Threshold, MinMax)
     self.Interval = 0
 
 class ShortButtonSensor(Sensor):
-  def __init__(self, Threshold, MinMax):
+  def __init__(self, Threshold, MinMax, Argument3 = "", Argument4 = ""):
     Sensor.__init__(self, "shortbutton", Threshold, MinMax)
     self.Interval = 0
