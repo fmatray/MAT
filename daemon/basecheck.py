@@ -14,3 +14,9 @@ class BaseCheck:
 
   def IsSensor(self):
     return False
+
+  def Update(self):
+    raise NotImplementedError
+    
+  def Check(self):
+    raise NotImplementedError
