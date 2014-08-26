@@ -39,7 +39,6 @@ try :
   while True:
    Sch.Schedule()
    Com.CheckCommunication()
-   Sch.UpdateSensor()
 
 except Exception, e:
   exc_type, exc_value, exc_traceback = sys.exc_info()
