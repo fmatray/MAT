@@ -96,7 +96,7 @@ class ArduinoSensor(Sensor):
       ArduinoSensor.Arduino = Arduino()
     self.UpdateCommand = ""
  
-   def Check(self):
+  def Check(self):
     if self.Interval >= 0 and (datetime.datetime.now() - self.LastUpdateTime).seconds >= self.Interval and self.UpdateCommand != "":
       ArduinoSensor.AddOutputData(self.UpdateCommand + "\n")
     if self.ActionSent == True:
