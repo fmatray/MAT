@@ -55,8 +55,8 @@ except Exception, e:
 class MatDaemon(Daemon):
     def run(self):
       MainLoop()
-
-# MAIN LOOP TO DAEMONIZE
+      
+# MAIN LOOP
 def MainLoop():
   logging.info("Starting Mat")
   while True:
