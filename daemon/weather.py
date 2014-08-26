@@ -53,7 +53,7 @@ class RainSensor(Sensor):
     self.Analogic = False
     self.Value = self.Weather.GetRain()
 
-  def Update(self, Value = ""):
+  def Update(self):
     self.Weather.Update()
     Sensor.Update(self,self.Weather.GetRain())
     
@@ -68,7 +68,7 @@ class FogSensor(Sensor):
     self.Analogic = False
     self.Value = self.Weather.GetFog()
 
-  def Update(self, Value = ""):
+  def Update(self):
     self.Weather.Update()
     Sensor.Update(self,self.Weather.GetFog())
     
@@ -83,7 +83,7 @@ class SnowSensor(Sensor):
     self.Analogic = False
     self.Value = self.Weather.GetSnow()
 
-  def Update(self, Value = ""):
+  def Update(self):
     self.Weather.Update()
     Sensor.Update(self,self.Weather.GetSnow())
     
@@ -98,7 +98,7 @@ class CloudsSensor(Sensor):
     self.Analogic = False
     self.Value = self.Weather.GetClouds()
 
-  def Update(self, Value = ""):
+  def Update(self):
     self.Weather.Update()
     Sensor.Update(self,self.Weather.GetClouds())
     

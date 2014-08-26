@@ -9,8 +9,6 @@ class Configuration(object):
     return Configuration._Instance
 
   def __init__(self):
-    global Config
-    Config = self
     return
 
   def AddKey(self, Category, Key, Value):

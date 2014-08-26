@@ -33,6 +33,9 @@ class ImapEmail(BaseCheck):
     except Exception, e:
       logging.error("CANNOT OPEN " + self.Server)
   
+  def Update(self):
+    self.Mail.noop()
+  
   def Check(self):
     try:
       Type, Data= self.Mail.status('INBOX', '(UNSEEN)')
@@ -78,6 +81,9 @@ class PopEmail(BaseCheck):
     except Exception, e:
       logging.error("CANNOT OPEN " + self.Server)
 
+  def Update(self):
+    self.Mail.noop()
+  
   def Check(self):
     Ret = ""
     try:
