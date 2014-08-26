@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import sys
+import time
+from daemon import Daemon
 import os
 import traceback
 import argparse
@@ -9,25 +11,22 @@ from schedule import *
 from database import *
 
 Parser = argparse.ArgumentParser(description='MAT : Maison AuTomatique')
-Parser.add_argument("--verbose", help="Increase output verbosity", action="store_true")
-Parser.add_argument("--debug", help="Debug mode", action="store_true")
-Parser.add_argument("--daemon", help="Daemonize MAT", action="store_true")
-
+Parser.add_argument("-D", "--daemon", help="Daemonize MAT", action="store", dest="Daemon", choices=["start", "stop", "restart"], default=None)
+Parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true", dest="Verbose", default=False)
+Parser.add_argument("-d", "--debug", help="Debug mode", action="store_true", dest="Debug", default=False)
 Args = Parser.parse_args()
 
 try :
   Level = logging.ERROR
-  if Arsg.verbose:
+  if Arsg.Verbose:
     Level = logging.INFO
-  if Arsg.debug:
+  if Arsg.Debug:
     Level = logging.DEBUG
     
   # Init Log
-  logging.basicConfig(
-    level=Level,
-    format='%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s')   
-
-  if not Args.daemon:
+  logging.basicConfig(level=Level, format='%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s')   
+  
+  if not Args.Daemon:
     # Log to console
     Console = logging.StreamHandler()
     Console.setLevel(Level)
@@ -47,12 +46,44 @@ try :
   Sch = Schedule(DataBase)
   Com = Communication()
 
-  logging.info("Starting Mat")
-# MAIN LOOP TO DAEMONIZE
-  while True:
-   Sch.Schedule()
-   Com.CheckCommunication()
-
 except Exception, e:
+  logging.critical("Setup Error")
   exc_type, exc_value, exc_traceback = sys.exc_info()
-  logging.critical(traceback.format_exc()) 
+  logging.critical(traceback.format_exc())   
+  sys.exit(1)
+  
+class MatDaemon(Daemon):
+    def run(self):
+      MainLoop()
+
+# MAIN LOOP TO DAEMONIZE
+def MainLoop():
+  logging.info("Starting Mat")
+  while True:
+    try:
+      Sch.Schedule()
+      Com.CheckCommunication()
+    except Exception, e:
+      logging.critical("Main Loop Error")
+      exc_type, exc_value, exc_traceback = sys.exc_info()
+      logging.critical(traceback.format_exc())
+      sys.exit(1)
+  
+if Args.Daemon != None:
+  Mat = MatDaemon("/var/run/mat.pid")
+  if Args.Daemon == "start":
+    Mat.start()
+  elif Args.Daemon == "start":
+    Mat.stop()
+  elif Args.Daemon == "start":
+    Mat.restart()
+  else
+    logging.critical("Unknow option for daemon")
+    sys.exit(1)
+else:
+  MainLoop()
+
+sys.exit(0)
+    
+    
+    
