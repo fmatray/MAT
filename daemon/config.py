@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import logging
 
 class Configuration(object):
   _Instance = None
