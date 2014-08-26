@@ -36,22 +36,27 @@ class ICalendar(Sensor):
   def __init__(self, Argument1 = "", Argument2 = "", Argument3 = "", Argument4 = ""):
     self.Icloud = Icloud()
     
-  def Update(self, Value = ""):
+  def Update(self):
+    raise NotImplementedError
     return
     
   def Check(self):
+    raise NotImplementedError
     return
     
 class IDeviceLocation(Sensor):
   def __init__(self, Longitude, Latitude, Argument3 = "", Argument4 = ""):
     self.Icloud = Icloud()
     self.Target = (Longitude, Latitude)
+    self.LastUpdateTime = None
     
-  def Update(self, Value = ""):
-    return
+  def Update(self):
+    if self.LastUpdateTime == None or (datetime.datetime.now() - self.LastUpdateTime).seconds >= 120 :
+      self.Location = self.ICloud.GetLocation()
+      self.LastUpdateTime = datetime.datetime.now() 
     
   def Check(self):
-    Location = self.ICloud.GetLocation()
-    if Location != None and vincenty(self.Target, Location).meters < 300:
-      return self.Action()
-    return ""
+    self.Update()
+    if self.Location != None and vincenty(self.Target, self.Location).meters < 300:
+      self.Action()
+    
