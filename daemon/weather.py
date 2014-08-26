@@ -6,7 +6,7 @@ import datetime
 
 class Weather(object):
   _Instance = None
- Configured = False
+  Configured = False
  
   def __new__(cls):
     if Weather._Instance == None:
