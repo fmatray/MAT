@@ -33,7 +33,7 @@ try :
     Console.setLevel(Level)
     Console.setFormatter(logging.Formatter('%(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
     logging.getLogger().addHandler(Console)
-  else
+  else:
     # Log to syslog
     from logging.handlers import SysLogHandler
     Syslog = SysLogHandler(address='/dev/log')
