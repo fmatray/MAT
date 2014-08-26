@@ -9,6 +9,9 @@ class Alarm(BaseCheck):
     self.Date = Date
     self.WeekDays = WeekDays
 
+  def Update(self):
+    return
+
   def Check(self):
 # ALARM on date and time 
     LocalTime = datetime.datetime.now()
@@ -23,9 +26,9 @@ class Alarm(BaseCheck):
 
     CalculatedAlarm = datetime.datetime.strptime(Date[0] + "." + Date[1] + "." + Date[2] + " " + Date[3] + ":" + Date[4], "%Y.%m.%d %H:%M")
     if CalculatedAlarm < LocalTime and LocalTime < CalculatedAlarm + datetime.timedelta(0, 10):
-      return self.Action()
+      self.Action()
+      return
 # ALARM on week day
     for i in range(0, 6):
       if self.WeekDays[i] == 1 and i == time.localtime()[6] and CalculatedAlarm < LocalTime and LocalTime < CalculatedAlarm + datetime.timedelta(0, 10):
-        return self.Action()
-    return ""
+        self.Action()
