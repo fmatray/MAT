@@ -1,8 +1,6 @@
 #!/usr/bin/python
 import time
 import datetime
-import sys
-import copy
 
 class Schedule:
   def __init__(self, DataBase):
