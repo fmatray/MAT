@@ -77,7 +77,7 @@ if Args.Daemon != None:
     Mat.stop()
   elif Args.Daemon == "start":
     Mat.restart()
-  else
+  else:
     logging.critical("Unknow option for daemon")
     sys.exit(1)
 else:
