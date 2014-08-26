@@ -2,40 +2,53 @@
 import sys
 import os
 import traceback
-import config 
+import argparse
 import logging
 from communication import *
 from schedule import *
 from database import *
 
-# MAIN LOOP
+Parser = argparse.ArgumentParser(description='MAT : Maison AuTomatique')
+Parser.add_argument("--verbose", help="Increase output verbosity", action="store_true")
+Parser.add_argument("--debug", help="Debug mode", action="store_true")
+Parser.add_argument("--daemon", help="Daemonize MAT", action="store_true")
+
+Args = Parser.parse_args()
+
 try :
-  # Log to file
+  Level = logging.ERROR
+  if Arsg.verbose:
+    Level = logging.INFO
+  if Arsg.debug:
+    Level = logging.DEBUG
+    
+  # Init Log
   logging.basicConfig(
-#    filename='daemon.log',
-    level=logging.INFO,
+    level=Level,
     format='%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s')   
 
-# Log to console
-  Console = logging.StreamHandler()
-  Console.setLevel(logging.DEBUG)
-  Console.setFormatter(logging.Formatter('%(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
-  logging.getLogger().addHandler(Console)
+  if not Args.daemon:
+    # Log to console
+    Console = logging.StreamHandler()
+    Console.setLevel(Level)
+    Console.setFormatter(logging.Formatter('%(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
+    logging.getLogger().addHandler(Console)
+  else
+    # Log to syslog
+    from logging.handlers import SysLogHandler
+    Syslog = SysLogHandler(address='/dev/log')
+    Syslog.setLevel(Level)
+    Syslog.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
+    logging.getLogger().addHandler(Syslog)
 
-# Log to syslog
-  from logging.handlers import SysLogHandler
-  Syslog = SysLogHandler(address='/dev/log')
-  Syslog.setLevel(logging.INFO)
-  Syslog.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d -- %(message)s'))
-  logging.getLogger().addHandler(Syslog)
-
-  logging.info("Starting Daemon")
+  logging.info("Setting Mat")
   DataBase = DataBase()
   Config = DataBase.InitConfig()
   Sch = Schedule(DataBase)
   Com = Communication()
 
-
+  logging.info("Starting Mat")
+# MAIN LOOP TO DAEMONIZE
   while True:
    Sch.Schedule()
    Com.CheckCommunication()
