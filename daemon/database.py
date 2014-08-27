@@ -12,12 +12,8 @@ from action import *
 
 
 class DataBase:
-  Req = {"Alarms" : "SELECT Actions.*, Alarms.* FROM Alarms, EventActions, Actions WHERE isactive=true AND Alarms.ID=EventActions.IDAlarm AND EventActions.IDAction=Actions.ID",
-          "Emails" : "SELECT Actions.*, Emails.* FROM Emails, EventActions, Actions WHERE Emails.ID = EventActions.IDEmail AND EventActions.IDAction = Actions.ID",
-          "Sensors": "SELECT Actions.*, Sensors.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID"}
-  Function = {"Alarms" : "self.GetAlarm",
-              "Emails" : "self.GetEmail",
-              "Sensors": "self.GetSensor"}
+  Req = {"Sensors": "SELECT Actions.*, Sensors.* FROM Sensors, EventActions, Actions WHERE Sensors.ID=EventActions.IDSensor AND EventActions.IDAction = Actions.ID"}
+  Function = {"Sensors": "self.GetSensor"}
   def __init__(self):
     try:
       self.DataBase = MySQLdb.connect(read_default_file = "~/my.cnf") # name of the conf file
