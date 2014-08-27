@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import time
 import datetime
-from basecheck import *
+from Sensor import *
 
-class Alarm(BaseCheck):
-  def __init__(self, Date, WeekDays):
-    BaseCheck.__init__(self)
-    self.Date = Date
-    self.WeekDays = WeekDays
+class AlarmSensor(Sensor):
+  def __init__(self, Date, Hours, WeekDays, Argument3 = "", Argument4 = ""):
+    Sensor.__init__(self)
+    self.Date = Date.split("/") + Hours.split(":")
+    self.WeekDays = WeekDays.split(":")
 
   def Update(self):
     return
