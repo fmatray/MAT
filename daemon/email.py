@@ -2,12 +2,13 @@
 import imaplib
 import poplib
 import logging
-from basecheck import *
+from sensor import *
 
-class ImapEmail(BaseCheck):
-  def __init__(self, Server, Port, Login, Password, Ssl):
-    BaseCheck.__init__(self)
-    if Port == 0:
+class ImapEmailSensor(Sensor):
+  def __init__(self, ServerPort, Login, Password, Ssl):
+    Sensor.__init__(self)
+    (Server, Port) = ServerPort.split(":")
+    if Port == "":
       if Ssl == True:
         Port = 993
       else:
@@ -52,10 +53,11 @@ class ImapEmail(BaseCheck):
       self.OpenConnection()
       return ""
 
-class PopEmail(BaseCheck):
-  def __init__(self, Server, Port, Login, Password, Ssl):
-    BaseCheck.__init__(self)
-    if Port == 0:
+class PopEmailSensor(Sensor):
+  def __init__(self, ServerPort, Login, Password, Ssl):
+    Sensor.__init__(self)
+    (Server, Port) = ServerPort.split(":")
+    if Port == "":
       if Ssl == True:
         Port = 995
       else:

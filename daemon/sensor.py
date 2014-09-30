@@ -1,10 +1,9 @@
 #!/usr/bin/python
 import datetime
-from basecheck import *
 
-class Sensor(BaseCheck):
+class Sensor:
   def __init__(self, Name, Threshold, MinMax, Argument3 = "", Argument4 = ""):
-    BaseCheck.__init__(self)
+    self.ActionList = []
     self.Name = Name
     self.Threshold = Threshold
     self.MinMax = MinMax
@@ -13,9 +12,15 @@ class Sensor(BaseCheck):
     self.ActionSent = False
     self.Analogic = True
     self.Interval = 120
-
-  def IsSensor(self):
-    return True
+    
+  def GetSensorName(self):
+    return self.Name
+    
+  def AddAction(self, Act):
+    self.ActionList.append(Act)
+  def Action(self):
+    for Action in self.ActionList:
+      Action.Action()
 
   def Update(self, Value = None):
     if Value != None:
@@ -45,5 +50,4 @@ class Sensor(BaseCheck):
         self.ActionSent = True
         self.Action()
 
-  def GetSensorName(self):
-    return self.Name
+

@@ -10,8 +10,13 @@ from communication import *
 from schedule import *
 from database import *
 
+DaemonActionHelp = """
+    Start = Starts the daemon (default)
+    Stop = Stops the daemon
+    Restart = Restarts the daemon
+    """
 Parser = argparse.ArgumentParser(description='MAT : Maison AuTomatique')
-Parser.add_argument("-D", "--daemon", help="Daemonize MAT", action="store", dest="Daemon", choices=["start", "stop", "restart"], default=None)
+Parser.add_argument("-D", "--daemon", help="Daemonize MAT", action="store", dest="Daemon", choices=("start", "stop", "restart"), default=None, help=DaemonActionHelp)
 Parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true", dest="Verbose", default=False)
 Parser.add_argument("-d", "--debug", help="Debug mode", action="store_true", dest="Debug", default=False)
 Args = Parser.parse_args()
@@ -68,21 +73,22 @@ def MainLoop():
       exc_type, exc_value, exc_traceback = sys.exc_info()
       logging.critical(traceback.format_exc())
       sys.exit(1)
-  
-if Args.Daemon != None:
-  Mat = MatDaemon("/var/run/mat.pid")
-  if Args.Daemon == "start":
-    Mat.start()
-  elif Args.Daemon == "start":
-    Mat.stop()
-  elif Args.Daemon == "start":
-    Mat.restart()
-  else:
-    logging.critical("Unknow option for daemon")
-    sys.exit(1)
-else:
-  MainLoop()
 
+if __name__ == "__main__":
+  if Args.Daemon != None:
+    Mat = MatDaemon("/var/run/mat.pid")
+    if Args.Daemon == "start":
+      Mat.start()
+    elif Args.Daemon == "start":
+      Mat.stop()
+    elif Args.Daemon == "start":
+      Mat.restart()
+    else:
+      logging.critical("Unknow option for daemon")
+      sys.exit(1)
+  else:
+    MainLoop()
+    
 sys.exit(0)
     
     
