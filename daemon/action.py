@@ -11,5 +11,3 @@ from pushover import *
 from samsungtv import *
 from freebox import *
 #from icloud import *
-
-

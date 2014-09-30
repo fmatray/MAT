@@ -16,16 +16,16 @@ DaemonActionHelp = """
     Restart = Restarts the daemon
     """
 Parser = argparse.ArgumentParser(description='MAT : Maison AuTomatique')
-Parser.add_argument("-D", "--daemon", help="Daemonize MAT", action="store", dest="Daemon", choices=("start", "stop", "restart"), default=None, help=DaemonActionHelp)
+Parser.add_argument("-D", "--daemon", help=DaemonActionHelp, action="store", dest="Daemon", choices=("start", "stop", "restart"), default=None)
 Parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true", dest="Verbose", default=False)
 Parser.add_argument("-d", "--debug", help="Debug mode", action="store_true", dest="Debug", default=False)
 Args = Parser.parse_args()
 print Args
 try :
   Level = logging.ERROR
-  if Arsg.Verbose:
+  if Args.Verbose:
     Level = logging.INFO
-  if Arsg.Debug:
+  if Args.Debug:
     Level = logging.DEBUG
     
   # Init Log

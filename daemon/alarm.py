@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import time
 import datetime
-from Sensor import *
+from sensor import *
 
 class AlarmSensor(Sensor):
   def __init__(self, Date, Hours, WeekDays, Argument3 = "", Argument4 = ""):
