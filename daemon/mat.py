@@ -15,7 +15,7 @@ Parser.add_argument("-D", "--daemon", help="Daemonize MAT", action="store", dest
 Parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true", dest="Verbose", default=False)
 Parser.add_argument("-d", "--debug", help="Debug mode", action="store_true", dest="Debug", default=False)
 Args = Parser.parse_args()
-
+print Args
 try :
   Level = logging.ERROR
   if Arsg.Verbose:
